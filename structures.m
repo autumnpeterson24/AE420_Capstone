@@ -211,7 +211,7 @@ cgY    = sum(W .* Yc) / totalW;
 % setup plot the view with no distortion
 figure; hold on; axis equal;
 xlabel('X (ft)'); ylabel('Y (ft)');
-title('Configuration 1: Twin Boom CG');
+% title('Configuration 1: Twin Boom CG');
 
 % loop through all the parts and colour them in
 % for random colour: max(randi(numel(W))/W)
@@ -286,4 +286,5 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
