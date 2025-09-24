@@ -82,7 +82,7 @@ cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 %   Note: Structures and Controls will need to agree on how CG is defined.
 
 % Call Aerodynamics function
-[D, CDp, CDi, alpha] = aerodynamics(S, AR, t, Sh, ARh, th, Sv, ARv, tv, V, Alt);
+[D, CDp, CDi, alpha] = aerodynamics(W, S, AR, t, Sh, ARh, th, Sv, ARv, tv, V, Alt, Cfig);
 
 % Call Stability function
 [SM, I] = stability(CG, AR, t, Vh, ARh, alpha);
@@ -92,3 +92,4 @@ cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 
 % Call Performance function
 [TOFL, Climb, MaxAlt, Time] = performance(W, S, D, P);
+
