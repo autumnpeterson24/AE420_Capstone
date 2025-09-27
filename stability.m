@@ -1,4 +1,4 @@
-function [SM, I] = stability(AR, Vh, ARh, cmac,CG, config)
+function [SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, config)
 % REVISON 2.6 (9/24/25)
 %
 % This function calculates the static margin (simplified) and the required
@@ -71,3 +71,4 @@ it_rad = -CMac_wing / (Vh * at);
 I = rad2deg(it_rad);
 
 end
+
