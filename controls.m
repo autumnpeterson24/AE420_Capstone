@@ -1,4 +1,4 @@
-function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, CG, config)
+function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, config)
 % REVISON 2.4 (9/24/25)
 %
 % This function calculates the size, geometry, and key stability parameters for
@@ -112,3 +112,4 @@ h_ac_wb = (Lw - xAC) / cmac;  % Non-dimensional Aerodynamic Center of wing/body
 hn = h_ac_wb + Vh * (at / a) * (1 - deda);
 
 end
+
