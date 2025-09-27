@@ -75,7 +75,7 @@ c_tip = t*c_root;       % wing tip chord
 cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 
 % Call Controls function
-[Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t);
+[Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, config);
 
 % Call Structures function
 [W, CG] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv);
@@ -85,11 +85,12 @@ cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 [D, CDp, CDi, alpha] = aerodynamics(W, S, AR, t, Sh, ARh, th, Sv, ARv, tv, V, Alt, Cfig);
 
 % Call Stability function
-[SM, I] = stability(CG, AR, t, Vh, ARh, alpha);
+[SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, config);
 
 % Call Propulsion function
 [P] = propulsion(V, D, Alt);
 
 % Call Performance function
 [TOFL, Climb, MaxAlt, Time] = performance(W, S, D, P);
+
 
