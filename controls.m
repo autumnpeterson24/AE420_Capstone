@@ -1,33 +1,114 @@
-function [Sh,ARh,th,Lh,Vh,Sv,ARv,tv,Lv,hn] = controls(b, S, cmac, t)
+function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, CG, config)
+% REVISON 2.4 (9/24/25)
+%
+% This function calculates the size, geometry, and key stability parameters for
+% an aircraft's horizontal and vertical tails based on a selected configuration.
+%
+% --- Approach ---
+% 1. Select a design configuration (1-4).
+% 2. Define geometric parameters (AR, taper ratio) for tails.
+% 3. Use typical volume coefficients (Vh, Vv) from literature.
+% 4. Estimate tail moment arms (Lh, Lv) based on wing span.
+% 5. Calculate required tail areas (Sh, Sv) from volume coefficient definitions.
+% 6. Estimate control surface spans (aileron, elevator, rudder).
+% 7. Calculate the aircraft's neutral point (hn).
+%
+% --- Inputs ---
+%   b      - Wing span
+%   S      - Wing reference area
+%   cmac   - Wing mean aerodynamic chord
+%   t      - Wing taper ratio
+%   CG     - Center of Gravity location (longitudinal)
+%   config - Configuration number to use for the analysis (1, 2, 3, or 4)
+%
+% --- Outputs ---
+%   Sh     - Area of horizontal tail
+%   ARh    - Aspect ratio of horizontal tail
+%   th     - Taper ratio of horizontal tail
+%   Lh     - Moment arm of horizontal tail
+%   Vh     - Horizontal tail volume coefficient
+%   Sv     - Area of vertical tail
+%   ARv    - Aspect ratio of vertical tail
+%   tv     - Taper ratio of vertical tail
+%   Lv     - Moment arm of vertical tail
+%   hn     - Neutral point location (non-dimensional, fraction of cmac)
+%
 
-% Approach:
-% 1. Define AR and taper for the horizontal and vertical tails
-% 2. Choose VH from guidelines in literature (i.e., 0.35 < Vh < 0.50)
-%       Similarly, 0.02 < Vv < 0.04
-% 3. Choose L_HT and L_VT as percentage of wing span (based on competitors)
-% 4. Calculate Sh and Sv (from definitions of Vh and Vv)
-% 5. Calculate rudder and elevator sizes
-% 6. Calculate neutral point
-%       Note: d_epsilon/d_alpha is needed. de/da is the variation in 
-%           downwash angle with change in the wing's angle of attack. 
-%       Source: Curve fit to data from Roskam and DATCOM
-%       Limitation: Assumes that bh = 0.4*b. (Otherwise, an approximation.)
+%% 1. AIRCRAFT CONFIGURATION DATABASE
+% --- Each column represents a different aircraft configuration ---
+% --- Please replace these placeholder values with your actual data ---
 
-% Please replace these "place holder" values with your own calculations.
-Sh = 30;    % area of horizontal tail (in^2)
-ARh = 2.5;  % aspect ratio of horizontal tail
-th = 0.8;   % taper ratio of horizontal tail
-Lh = 24;    % moment arm of horizontal tail (inches)
-Vh = 0.45;  % horizontal tail voiume coefficient
+% Horizontal Stabilizer Data
+Lh_vec = [25.0, 26.0, 27.0, 28.0]; % Moment arm (c/4 wing to c/4 tail)
+bh_vec = [10.0, 11.0, 12.0, 13.0]; % Span
+th_vec = [ 0.8,  0.8,  0.7,  0.7]; % Taper ratio
 
-Sv = 18;    % area of vertical tail (in^2)
-ARv = 1.3;  % aspect ratio of vertical tail
-tv = 0.8;   % taper ratio of vertical tail
-Lv = 24;    % moment arm of vertical tail (inches)
+% Vertical Stabilizer Data
+Lv_vec = [24.0, 25.0, 26.0, 27.0]; % Moment arm (c/4 wing to c/4 tail)
+bv_vec = [ 8.0,  9.0, 10.0, 11.0]; % Span
+tv_vec = [ 0.8,  0.8,  0.7,  0.7]; % Taper ratio
 
-hn = 0.8;   % neutral point
+% Wing Location Data
+Lw_vec = [5.0, 4.0, 2.8, 2.5];     % x-location of the wing's leading edge
 
-% Calculations (please retain for your code)
-AR = b^2/S; % aspect ratio of wing
-%   Use Lh as an approx of the distance from c/4 of wing to c/4 of tail
-deda = Downwash_on_Tail(AR,b,t,Lh);
+%% 2. CONSTANTS & ASSUMPTIONS
+% --- These values are assumed to be constant across all configurations ---
+Vh  = 0.4;      % Horizontal tail volume coefficient (Guideline: 0.35 - 0.50)
+Vv  = 0.03;     % Vertical tail volume coefficient (Guideline: 0.02 - 0.04)
+a0  = 0.0972;   % 2D lift curve slope for wing airfoil (per radian)(BOE 103)
+a0t = 0.113575; % 2D lift curve slope for tail airfoil (per radian)(NACA 0015)
+
+%% 3. SELECT ACTIVE CONFIGURATION
+% --- Extracts the data for the chosen 'config' number ---
+Lh = Lh_vec(config);
+bh = bh_vec(config);
+th = th_vec(config);
+
+Lv = Lv_vec(config);
+bv = bv_vec(config);
+tv = tv_vec(config);
+
+Lw = Lw_vec(config);
+
+%% 4. CALCULATIONS
+% --- Main Wing Aspect Ratio ---
+AR = b^2 / S;
+
+% --- Tail Area Sizing (from Volume Coefficients) ---
+% Vh = (Sh * Lh) / (S * cmac) -> Rearranged for Sh
+Sh = (Vh * S * cmac) / Lh;
+
+% Vv = (Sv * Lv) / (S * b) -> Rearranged for Sv
+Sv = (Vv * S * b) / Lv;
+
+% --- Tail Aspect Ratios ---
+ARh = bh^2 / Sh;
+ARv = bv^2 / Sv;
+
+% --- Control Surface Sizing (based on Raymer's guidelines) ---
+aileron_span  = 0.4 * b;  % Ailerons span ~40% of the wing (e.g., from 0.5b to 0.9b)
+elevator_span = 0.9 * bh; % Elevator span is ~90% of horizontal tail span
+rudder_span   = 0.9 * bv; % Rudder span is ~90% of vertical tail span
+
+% --- Neutral Point Calculation ---
+% Convert 2D lift curve slopes to 3D using lifting-line theory
+a  = a0 / (1 + (a0 / (pi * AR)));
+at = a0t / (1 + (a0t / (pi * ARh)));
+
+% Downwash Calculation (d_epsilon / d_alpha)
+% Note: This requires a separate function 'Downwash_on_Tail' to be defined
+% and available in your MATLAB path.
+deda = Downwash_on_Tail(AR, b, t, Lh);
+
+% Aerodynamic center of the wing/body (assumed at quarter-chord of MAC)
+%corrected to be taken from nose of the aircraft
+xAC = (0.25 * cmac) + Lw;
+
+% Non-dimensionalize key longitudinal distances by the MAC
+h       = (Lw - CG) / cmac;   % Non-dimensional CG location
+h_ac_wb = (Lw - xAC) / cmac;  % Non-dimensional Aerodynamic Center of wing/body
+
+% Calculate the neutral point
+hn = h_ac_wb + Vh * (at / a) * (1 - deda);
+
+end
