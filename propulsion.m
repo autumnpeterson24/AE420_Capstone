@@ -1,4 +1,4 @@
-rfunction [P] = propulsion(V, D, Alt)
+function [P] = propulsion(V, D, Alt)
 %% ============================================================
 % Propulsion Function  - Updated on28/09/2025
 % Corrected Propulsion Function for AE 420 Framework
@@ -87,3 +87,4 @@ else
 end
 %end of code 
 end
+
