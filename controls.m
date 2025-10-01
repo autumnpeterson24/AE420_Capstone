@@ -39,16 +39,16 @@ function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, co
 % --- Please replace these placeholder values with your actual data ---
 
 % Horizontal Stabilizer Data
-Lh_vec = [-2.8, 4.033, 2.853, 2.964]; % Moment arm (c/4 wing to c/4 tail)
-bh_vec = [4.0, 2.742, 5.615, 2.972]; % Span
-th_vec = [0.4,  1,  1, 0.702]; % Taper ratio
-Vh_vec = [0.620, 0.875, 1.916, 1.073]; % Volume Coefficient of Horizontal Tail
+Lh_vec = [-2.800, 4.033, 2.853, 2.964]; % Moment arm (c/4 wing to c/4 tail)
+bh_vec = [ 4.000, 2.742, 5.615, 2.972]; % Span
+th_vec = [ 0.400, 1.000, 1.000, 0.702]; % Taper ratio
+Vh_vec = [ 0.620, 0.875, 1.916, 1.073]; % Volume Coefficient of Horizontal Tail
 
 % Vertical Stabilizer Data
-Lv_vec = [0 , 4.033, 0, 4.89]; % Moment arm (c/4 wing to c/4 tail)
-bv_vec = [0 , 0.792, 0, 0.886]; % Span
-tv_vec = [0 , 1, 0, .560]; % Taper ratio
-Vv_vec = [0 , 0.803, 0, 0.232]; % Volume Coefficient of Vertical Tail
+Lv_vec = [0.201 , 4.033, 0.0100, 4.89]; % Moment arm (c/4 wing to c/4 tail)
+bv_vec = [2.828 , 0.792, 1.7930, 0.886]; % Span
+tv_vec = [0.364 , 1.000, 0.5880, 0.560]; % Taper ratio
+Vv_vec = [0.005 , 0.030, 0.0003, 0.027]; % Volume Coefficient of Vertical Tail
 
 % Wing Location Data
 Lw_vec = [4.958, 2.746, 2.685, 1.1];     % x-location of the wing's leading edge
@@ -79,9 +79,10 @@ AR = b^2 / S;
 % --- Tail Area Sizing (from Volume Coefficients) ---
 % Vh = (Sh * Lh) / (S * cmac) -> Rearranged for Sh
 Sh = (Vh * S * cmac) / Lh;
-
+disp(Sh)
 % Vv = (Sv * Lv) / (S * b) -> Rearranged for Sv
 Sv = (Vv * S * b) / Lv;
+disp(Sv)
 
 % --- Tail Aspect Ratios ---
 ARh = bh^2 / Sh;
