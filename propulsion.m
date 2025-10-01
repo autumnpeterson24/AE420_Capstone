@@ -1,6 +1,6 @@
 function [P] = propulsion(V, D, Alt)
 %% ============================================================
-% Propulsion Function - Corrected per Traub (2011)
+% Propulsion Function
 % Updated: September 30, 2025
 % Francisco Javier Laso Iglesias
 %
@@ -99,3 +99,4 @@ else
 end
 
 end
+
