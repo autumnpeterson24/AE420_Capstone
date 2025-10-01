@@ -39,22 +39,22 @@ function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, co
 % --- Please replace these placeholder values with your actual data ---
 
 % Horizontal Stabilizer Data
-Lh_vec = [25.0, 26.0, 27.0, 28.0]; % Moment arm (c/4 wing to c/4 tail)
-bh_vec = [10.0, 11.0, 12.0, 13.0]; % Span
-th_vec = [ 0.8,  0.8,  0.7,  0.7]; % Taper ratio
+Lh_vec = [-2.8, 4.033, 2.853, 2.964]; % Moment arm (c/4 wing to c/4 tail)
+bh_vec = [4.0, 2.742, 5.615, 2.972]; % Span
+th_vec = [0.4,  1,  1, 0.702]; % Taper ratio
+Vh_vec = [0.620, 0.875, 1.916, 1.073]; % Volume Coefficient of Horizontal Tail
 
 % Vertical Stabilizer Data
-Lv_vec = [24.0, 25.0, 26.0, 27.0]; % Moment arm (c/4 wing to c/4 tail)
-bv_vec = [ 8.0,  9.0, 10.0, 11.0]; % Span
-tv_vec = [ 0.8,  0.8,  0.7,  0.7]; % Taper ratio
+Lv_vec = [0 , 4.033, 0, 4.89]; % Moment arm (c/4 wing to c/4 tail)
+bv_vec = [0 , 0.792, 0, 0.886]; % Span
+tv_vec = [0 , 1, 0, .560]; % Taper ratio
+Vv_vec = [0 , 0.803, 0, 0.232]; % Volume Coefficient of Vertical Tail
 
 % Wing Location Data
-Lw_vec = [5.0, 4.0, 2.8, 2.5];     % x-location of the wing's leading edge
+Lw_vec = [4.958, 2.746, 2.685, 1.1];     % x-location of the wing's leading edge
 
 %% 2. CONSTANTS & ASSUMPTIONS
 % --- These values are assumed to be constant across all configurations ---
-Vh  = 0.4;      % Horizontal tail volume coefficient (Guideline: 0.35 - 0.50)
-Vv  = 0.03;     % Vertical tail volume coefficient (Guideline: 0.02 - 0.04)
 a0  = 0.0972;   % 2D lift curve slope for wing airfoil (per radian)(BOE 103)
 a0t = 0.113575; % 2D lift curve slope for tail airfoil (per radian)(NACA 0015)
 
@@ -63,10 +63,12 @@ a0t = 0.113575; % 2D lift curve slope for tail airfoil (per radian)(NACA 0015)
 Lh = Lh_vec(config);
 bh = bh_vec(config);
 th = th_vec(config);
+Vh  = Vh_vec(config);
 
 Lv = Lv_vec(config);
 bv = bv_vec(config);
 tv = tv_vec(config);
+Vv  = Vv_vec(config);
 
 Lw = Lw_vec(config);
 
@@ -105,11 +107,10 @@ deda = Downwash_on_Tail(AR, b, t, Lh);
 xAC = (0.25 * cmac) + Lw;
 
 % Non-dimensionalize key longitudinal distances by the MAC
-h       = (Lw - CG) / cmac;   % Non-dimensional CG location
+% h       = (Lw - CG) / cmac;   % Non-dimensional CG location
 h_ac_wb = (Lw - xAC) / cmac;  % Non-dimensional Aerodynamic Center of wing/body
 
 % Calculate the neutral point
 hn = h_ac_wb + Vh * (at / a) * (1 - deda);
 
 end
-
