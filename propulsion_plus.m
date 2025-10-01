@@ -20,20 +20,19 @@ function [P] = propulsion_plus(v, d, Alt)
 %   P : Electrical input power at (v, d) [W], limited by system caps
 %
 % Notes:
-%   * All internal calcs are IMPERIAL; conversions explicit where needed.
-%   * Replace CT_fun/CP_fun with a real prop map for fidelity.
+%   * All internal calcs are IMPERIAL Units as asked by Chief Engineer
 %   * Traub (2011) relations used for U_E, U_R, and endurance with Peukert.
 % ============================================================
 %% ---- Vehicle & System numbers ----
 % Motor / ESC / Battery (3S2P, 22 Ah cells -> 132 Ah total)
 motor_Kv       = 380;        % rpm/V (spec)
-motor_Rm       = 0.0317;       % ohm (typical magnitude; not used directly here)
+motor_Rm       = 0.0317;       % ohm 
 esc_I_cont     = 150;         % A (controller limit)
 eta_motor_cru  = 0.85;       % -
 eta_esc        = 0.93;       % -
 Vbatt_nom        = 11.1;     % V (3S nominal)
 batt_capacity_Ah = 132;     % Ah (2P × 22 Ah)
-batt_C_rating    = 80/120;      % sustained C for ops (tunable)
+batt_C_rating    = 80/120;      % sustained C for ops 
 I_batt_max       = batt_capacity_Ah * batt_C_rating; % A
 I_lim            = min(esc_I_cont, I_batt_max);       % A (electrical current cap)
 P_elec_max       = Vbatt_nom * I_lim;                 % W (electrical power cap)
@@ -43,7 +42,7 @@ prop_pitch_ft = 18/12;       % ft (pitch)
 prop_blades   = 2;
 rpm_max_hw    = motor_Kv * Vbatt_nom;  % rpm (no-load back-EMF cap)
 % Airframe / Aerodynamics
-W   = 40.00;   % lbf  (24.95 kg ≈ 55 lbf)
+W   = 40.00;   % lbf  (18.14 kg ≈ 40 lbf)
 S   = 8.09;    % ft^2 (75.25 dm^2)
 CD0 = 0.03;    % parasite drag
 b_ft= 1.27/0.3048;          % wingspan [ft]
