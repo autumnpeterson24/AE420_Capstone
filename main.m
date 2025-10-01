@@ -1,5 +1,5 @@
-% Author: Brian Roth
-% Date: Sept 22, 2022
+% Author: Fish
+% Date: Oct 1, 2026
 % Course: AE 420 - Aircraft Preliminary Design
 % Purpose: Main code that calls disciplinary functions
 %
@@ -63,10 +63,10 @@ clc
 % Design variable choices
 V = 15;      % flight velocity (ft/s)
 Alt = 12000; % flight altitude (ft)
-b = 44;      % wing span (inches)
-cavg = 6.5;  % average wing chord length (inches)
+b = 10;      % wing span (ft)
+cavg = 0.5;  % average wing chord length (ft)
 t = 0.7;     % wing taper ratio
-
+Cfig = 2;    % Config Selection
 % Calculated properties
 S = b*cavg;     % wing area (in^2)
 AR = b^2/S;     % wing aspect ratio
@@ -75,23 +75,22 @@ c_tip = t*c_root;       % wing tip chord
 cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 
 % Call Controls function
-[Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, config);
+[Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, Cfig);
 
 % Call Structures function
-[W, CG] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, config);
+[W, CG] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, Cfig);
 %   Note: Structures and Controls will need to agree on how CG is defined.
 
 % Call Aerodynamics function
-[D, CDp, CDi, alpha] = aerodynamics(W, S, AR, t, Sh, ARh, th, Sv, ARv, tv, V, Alt, config);
+[D, CDp, CDi, alpha] = aerodynamics(W, S, AR, t, Sh, ARh, th, Sv, ARv, tv, V, Alt, Cfig);
 
 % Call Stability function
-[SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, config);
+[SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, Cfig);
 
 % Call Propulsion function
 [P] = propulsion(V, D, Alt);
 
 % Call Performance function
 [TOFL, Climb, MaxAlt, Time] = performance(W, S, D, P);
-
 
 
