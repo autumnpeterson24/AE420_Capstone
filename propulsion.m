@@ -1,90 +1,101 @@
 function [P] = propulsion(V, D, Alt)
 %% ============================================================
-% Propulsion Function  - Updated on28/09/2025
-% Corrected Propulsion Function for AE 420 Framework
-%  Francisco Javier Laso Iglesias
+% Propulsion Function - Corrected per Traub (2011)
+% Updated: September 30, 2025
+% Francisco Javier Laso Iglesias
 %
-%  Inputs:
-%    V   - flight velocity (ft/s)
-%    D   - drag force = thrust required (lbf) 
-%    Alt - altitude (ft)
+% Inputs:
+%   V   - flight velocity (ft/s)
+%   D   - drag force = thrust required (lbf) 
+%   Alt - altitude (ft)
 %
-%  Outputs:
-%    P   - power consumption (watts)
+% Outputs:
+%   P   - electrical power consumption (watts)
+%
+% Reference: Traub, L.W. (2011). "Range and Endurance Estimates 
+%            for Battery-Powered Aircraft." Journal of Aircraft.
 % ============================================================
 
-
-%% System Parameters (Your T-Motor U3-700 Configuration)
+%% System Parameters 
+% Motor
 motor_Kv = 700;              % RPM/V
 motor_Rm = 0.05;             % ohms (motor resistance)
-motor_Imax = 25;             % A (maximum current)
+motor_Imax = 80;             % A 
 
-% Battery System 100/6S LiPo
-Vbatt_nom = 22.2;            % V (6S nominal)
-batt_capacity_Ah = 84;       % Ah (converted from 84000 mAh)
-batt_C_rating = 65;          % C rating
-I_batt_max = batt_capacity_Ah * batt_C_rating; % max battery current
-I_motor_max = min(motor_Imax, I_batt_max);     % actual motor current limit
+% Battery System: 3S4P LiPo 
+% 3S = 11.1V nominal, 4P = 4 cells in parallel
+Vbatt_nom = 11.1;            % V (3S nominal: 3.7V × 3)
+batt_capacity_Ah = 56.48;    % Ah (4P × 14.12 Ah per cell)
+batt_C_rating = 1.0;         % Continuous discharge C-rating
+I_batt_max = batt_capacity_Ah * batt_C_rating;
+I_motor_max = min(motor_Imax, I_batt_max);
 
-% Efficiencies
+% System Efficiencies 
 eta_esc = 0.93;              % ESC efficiency
-eta_motor = 0.88;            % realistic motor efficiency under load
-eta_prop = 0.75;             % propeller efficiency (typical cruise)
+eta_motor = 0.85;            % Motor efficiency (cruise)
+eta_prop = 0.75;             % Propeller efficiency (cruise)
+eta_tot = eta_esc * eta_motor * eta_prop;  % Total efficiency
 
 % Propeller
-prop_diam = 20/12;           % ft (20 inches)
+prop_diam = 20/12;           % ft (20 inches diameter)
 
-%% Constants
-rho0 = 0.002377;             % slug/ft^3
-T0 = 518.67;                 % °R
-L = 0.00356;                 % °R/ft
+%% Physical Constants
+rho0 = 0.002377;             % slug/ft^3 (sea level)
+T0 = 518.67;                 % °R (sea level temperature)
+L = 0.00356;                 % °R/ft (lapse rate)
 g = 32.174;                  % ft/s^2
 R = 1716.59;                 % ft·lbf/(slug·°R)
 
-%% Standard Atmosphere
+%% Conversion Factor
+ftlbfps_to_W = 1.35582;      % ft·lbf/s to Watts
+
+%% Standard Atmosphere Model
 T_alt = T0 - L*Alt;
 if T_alt <= 0
-    T_alt = 200; % prevent negative temperature
+    T_alt = 200; 
 end
 sigma = (T_alt/T0)^((g/(L*R)) - 1);
 rho = rho0 * sigma;
 
 %% Power Calculation 
 
-% Step 1: Ideal propulsive power
-P_ideal_ftlbfps = D * V;     % ft·lbf/s
+% Step 1: Aerodynamic power required 
+% P_req = D × U
+P_aero_ftlbfps = D * V;      % ft·lbf/s
 
-% Step 2: Shaft power (account for propeller efficiency)
-P_shaft_ftlbfps = P_ideal_ftlbfps / eta_prop; % ft·lbf/s
+% Step 2: Convert to Watts
+P_aero_W = P_aero_ftlbfps * ftlbfps_to_W;
 
-% Step 3: Convert to watts for motor analysis
-P_shaft_watts = P_shaft_ftlbfps * 550 / 745.7; % convert ft·lbf/s to hp to watts
-P_shaft_watts = P_shaft_ftlbfps * 1.356; % direct conversion: ft·lbf/s to watts
+% Step 3: Electrical input power 
+% Per Traub: P_battery = P_required / η_tot
+P_elec_W = P_aero_W / eta_tot;
 
-% Step 4: Motor electrical power
-P_motor_elec = P_shaft_watts / eta_motor; % watts
+%% System Limits Check
 
-% Step 5: Total electrical power (include ESC losses)
-P_elec_total = P_motor_elec / eta_esc; % watts
+% Maximum power available from battery
+P_batt_max = Vbatt_nom * I_motor_max;  % Watts
 
-% Step 6: Check system limits
-P_batt_max = Vbatt_nom * I_motor_max; % maximum available power
+% Motor back-EMF check 
+% Typical cruise advance ratio J ≈ 0.8 for efficient props
+J_cruise = 0.8;
+n_rps = V / (J_cruise * prop_diam);  % rev/s
+rpm_est = n_rps * 60;                 % RPM
 
-% Motor voltage check (simplified)
-% Estimate RPM needed for this power level
-rpm_est = 4000; % reasonable estimate for cruise
-omega_rad_s = rpm_est * (2*pi/60);
-V_back_emf = omega_rad_s / (motor_Kv * 2*pi/60);
-V_motor_est = V_back_emf + (P_motor_elec/Vbatt_nom) * motor_Rm;
+% Back-EMF voltage
+V_back_emf = rpm_est / motor_Kv;
 
-% Check if motor can operate
-if V_motor_est > Vbatt_nom || P_elec_total > P_batt_max
-    % Scale back to feasible power
-    P_feasible = min(P_elec_total, P_batt_max * 0.9);
-    P = P_feasible;
+% Required motor voltage (simplified)
+I_motor_est = P_elec_W / Vbatt_nom;
+V_motor_req = V_back_emf + (I_motor_est * motor_Rm);
+
+% Check operating limits
+if V_motor_req > Vbatt_nom || P_elec_W > P_batt_max
+    % System is at or beyond limits - cap to maximum available
+    P = min(P_elec_W, P_batt_max * 0.95);  % 95% for safety margin
+    
+    warning('Power demand (%.0f W) exceeds system limits. Capping to %.0f W.', P_elec_W, P);
 else
-    P = P_elec_total;
-end
-%end of code 
+    P = P_elec_W;
 end
 
+end
