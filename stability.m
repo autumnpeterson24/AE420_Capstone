@@ -30,14 +30,14 @@ function [SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, config)
 % --- Please replace these placeholder values with your actual data ---
 
 % Longitudinal locations are measured from the aircraft nose
-Lw_vec     = [5.0, 4.0, 2.8, 2.5]; % x-location of the wing's leading edge
+Lw_vec     = [5.0, 4.0, 2.8, 1.583]; % x-location of the wing's leading edge
 % Wing-specific geometric properties REPLACE WITH REAL VALUES
-Lambda_vec = [10,  10,  10,  10 ]; % Wing sweep angle (degrees)
+Lambda_vec = [10,  10,  10,  2.5 ]; % Wing sweep angle (degrees)
 
 %% 2. CONSTANTS & ASSUMPTIONS
 % --- These values are assumed to be constant across all configurations ---
 a0t = 0.113575; % 2D lift curve slope for tail airfoil (per radian, for NACA 0015)
-Cm0 = -0.075;   % 2D airfoil moment coefficient at AoA=0 (BOE103)
+Cm0 = -0.09;   % 2D airfoil moment coefficient at AoA=0 (BOE103)
 
 %% 3. SELECT ACTIVE CONFIGURATION
 % --- Extracts the data for the chosen 'config' number ---
@@ -45,12 +45,11 @@ Lw     = Lw_vec(config);
 Lambda = Lambda_vec(config); % Wing sweep in degrees
 
 %% 4. CALCULATIONS
-
 % --- Static Margin ---
 % Note: This is a simplified static margin representing the distance from the
 % wing's AC to the CG. A full analysis would use the neutral point (hn).
 xAC = Lw + (0.25 * cmac); % Aerodynamic Center location (assuming quarter-chord)
-SM  = (xAC - CG);   % static margin taken in x-distance from the nose 
+SM  = (xAC - CG)/cmac;   % static margin taken in x-distance from the nose 
 
 % --- Tail Incidence Angle ---
 % Convert 2D tail lift curve slope to 3D using lifting-line theory
@@ -65,10 +64,8 @@ CMac_wing = (Cm0 * AR * cos(Lambda_rad)^2) / (AR + 2 * cos(Lambda_rad));
 
 % Calculate the required tail incidence to counteract the wing's moment
 % This ensures the aircraft has a neutral or slightly positive pitching moment
-it_rad = -CMac_wing / (Vh * at);
-
+I = -CMac_wing / (Vh * at);
 % Convert incidence angle to degrees for the final output
-I = rad2deg(it_rad);
+% I = rad2deg(it_rad);
 
 end
-
