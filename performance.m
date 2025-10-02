@@ -44,7 +44,7 @@ Climb = Climb_Cruise;
 
 % max altitude (ft) Needs to find altitude where 100ft/min climb is acheived (Bennett)
 MaxAlt = 15000;
-P_MaxAlt = 100*W/V/60 + D(3)
+P_MaxAlt = 100*W/V/60 + D(3);
 
 alts = linspace(0,40000,80);
 prop_D_ft     = 22/12;
@@ -100,4 +100,5 @@ fprintf("Cruise Endurance                  = %4.2f (h)\n",Time2);
 %provides the 900-1100 ft/min climb rates at various altitudes. GA
 %requirement's state a climb rate of 400-500 ft/min was our target which
 %seems impossible to achieve both requirements so the takeoff distance was
+
 %prioritized as we can out perform climb rates if needed
