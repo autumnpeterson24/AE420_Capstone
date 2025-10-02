@@ -42,13 +42,13 @@ function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, co
 Lh_vec = [-2.800, 4.033, 2.853, 2.964]; % Moment arm (c/4 wing to c/4 tail)
 bh_vec = [ 4.000, 2.742, 5.615, 2.972]; % Span
 th_vec = [ 0.400, 1.000, 1.000, 0.702]; % Taper ratio
-Vh_vec = [ 0.620, 0.875, 1.916, 1.073]; % Volume Coefficient of Horizontal Tail
+% Vh_vec = [ 0.620, 0.875, 1.916, 1.073]; % Volume Coefficient of Horizontal Tail
 
 % Vertical Stabilizer Data
 Lv_vec = [0.201 , 4.033, 0.0100, 4.89]; % Moment arm (c/4 wing to c/4 tail)
 bv_vec = [2.828 , 0.792, 1.7930, 0.886]; % Span
 tv_vec = [0.364 , 1.000, 0.5880, 0.560]; % Taper ratio
-Vv_vec = [0.005 , 0.030, 0.0003, 0.027]; % Volume Coefficient of Vertical Tail
+% Vv_vec = [0.005 , 0.030, 0.0003, 0.027]; % Volume Coefficient of Vertical Tail
 
 % Wing Location Data
 Lw_vec = [4.958, 2.746, 2.685, 1.1];     % x-location of the wing's leading edge
@@ -63,12 +63,12 @@ a0t = 0.113575; % 2D lift curve slope for tail airfoil (per radian)(NACA 0015)
 Lh = Lh_vec(config);
 bh = bh_vec(config);
 th = th_vec(config);
-Vh  = Vh_vec(config);
+Vh  = 0.4;
 
 Lv = Lv_vec(config);
 bv = bv_vec(config);
 tv = tv_vec(config);
-Vv  = Vv_vec(config);
+Vv  = 0.04;
 
 Lw = Lw_vec(config);
 
@@ -78,10 +78,10 @@ AR = b^2 / S;
 
 % --- Tail Area Sizing (from Volume Coefficients) ---
 % Vh = (Sh * Lh) / (S * cmac) -> Rearranged for Sh
-Sh = (Vh * S * cmac) / Lh;
+Sh = (Vh * S * cmac) / abs(Lh);
 disp(Sh)
 % Vv = (Sv * Lv) / (S * b) -> Rearranged for Sv
-Sv = (Vv * S * b) / Lv;
+Sv = (Vv * S * b) / abs(Lv);
 disp(Sv)
 
 % --- Tail Aspect Ratios ---
