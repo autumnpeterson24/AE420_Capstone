@@ -14,11 +14,11 @@ function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, 
 % lbs and ft are the base units out for W and CG. CG datum is from the nose
 
 %% Placeholder default values for Lh, Lv, Lw
-rfuselage = [0.4 0.4 0.8 0.6];
+rfuselage = [10.74887755/2 8/2 25.26/2 10.08750493/2]/12;
 rfuselage = rfuselage(ConfigNum);
-Lfuselage = [7 5.5 6 7];
+Lfuselage = [98 56.56 86.01 60.86]/12;
 Lfuselage = Lfuselage(ConfigNum);
-Lw = [5 4 2.8 2.5];
+Lw = [59.49 34.97 32.22 13.2]/12;
 Lw = Lw(ConfigNum);
 
 %% calculation of secondary distances
@@ -286,6 +286,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
