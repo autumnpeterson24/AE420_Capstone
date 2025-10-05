@@ -1,9 +1,9 @@
-function [TOFL, Climb, MaxAlt, Time2] = performance(W, S, P,V, h, AR);
+function [TOFL, Climb, MaxAlt, Time2] = performance(W, S, P,V, h,AR,Drag);
 % Input variables:
 %		W		        Weight of aircraft (lb)
 %		S		        Wing area (ft^2)
 %       P               Thrust of aircraft (lbf)
-%       V    Cruise speed of aircraft (kts)
+%       V               Cruise speed of aircraft (kts)
 %       h               Aircraft altitude (ft)
 % Output variables: 
 %		TOFL            Takeoff feild length (ft)
@@ -14,7 +14,7 @@ function [TOFL, Climb, MaxAlt, Time2] = performance(W, S, P,V, h, AR);
 %Constants
 R = 1716.0;	 % specific gas constant for air [(ft*lb) / (slug*Rankine)]
 g = 32.174;	 % acceleration due to gravity (ft/s^2)
-AR =AR;
+AR = AR;
 %Baseline Constants
 Cl_max = 1.4;
 Cdo = [0.0313 0.0322 0.0321]; % TO 5200 6000 ft
@@ -34,20 +34,20 @@ Vavg = 0.7.*1.2.*sqrt(2.*W./(rho(1).*S.*Cl_max)); % average velocity
 Lavg=1.*0.5.*rho(1).*Vavg.^2.*S; % average lift
 
 % takeoff field length (ft) (Bennett)
-TOFL = (1.44*W^2)/(rho(1)*S*Cl_max*g*(P(1)-D(1)-.03*(W-Lavg)));
+TOFL = (1.44*W^2)/(rho(1)*S*Cl_max*g*(P-Drag-.03*(W-Lavg)));
 
 % rate of climb (ft/min) (Bennett)
 % Climb_TO = V*((P(1)-D(1))/W);
 % Climb_Cruise = V*((P(2)-D(2))/W);
 % Climb_MaxAlt = V*((P(3)-D(3))/W);
 % Climb = Climb_Cruise;
-Climb_TO = V*((P-D)/W);
-Climb_Cruise = V*((P-D)/W);
-Climb_MaxAlt = V*((P-D)/W);
-Climb = Climb_Cruise;
+%Climb_TO = V*((P-D(1))/W);
+Climb_Cruise = V*((P-Drag)/W);
+%Climb_MaxAlt = V*((P-D(3))/W);
+Climb = Climb_Cruise*60;
 
 % max altitude (ft) Needs to find altitude where 100ft/min climb is acheived (Bennett)
-MaxAlt = 15000;
+%MaxAlt = 15000;
 % P_MaxAlt = 100*W/V/60 + D(3);
 P_MaxAlt = 100*W/V/60 + D(3);
 
@@ -73,6 +73,7 @@ for i = 1:numel(alts)
         break;
     end
 end
+MaxAlt = 15000;
 
 %needs work with prop team to find the altitude
 
