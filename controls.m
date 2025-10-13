@@ -38,51 +38,54 @@ function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, co
 % --- Each column represents a different aircraft configuration ---
 % --- Please replace these placeholder values with your actual data ---
 
+
+
 % Horizontal Stabilizer Data
-Lh_vec = [-2.800, 4.033, 2.853, 2.964]; % Moment arm (c/4 wing to c/4 tail)
-bh_vec = [ 4.000, 2.742, 5.615, 2.972]; % Span
-th_vec = [ 0.400, 1.000, 1.000, 0.702]; % Taper ratio
+Lh_vec = [2.000, 4.033, 2.000, 2.964 2.300]; % Moment arm (c/4 wing to c/4 tail)
+bh_vec = [0.4*b, 2.742, 0.4*b, 2.972 3.300]; % Span
+th_vec = [1.000, 1.000, 0.702, 0.702 0.600]; % Taper ratio
 % Vh_vec = [ 0.620, 0.875, 1.916, 1.073]; % Volume Coefficient of Horizontal Tail
 
 % Vertical Stabilizer Data
-Lv_vec = [0.201 , 4.033, 0.0100, 4.89]; % Moment arm (c/4 wing to c/4 tail)
-bv_vec = [2.828 , 0.792, 1.7930, 0.886]; % Span
-tv_vec = [0.364 , 1.000, 0.5880, 0.560]; % Taper ratio
+Lv_vec = [2.000, 4.033, 2.000, 4.890 2.300]; % Moment arm (c/4 wing to c/4 tail)
+bv_vec = [0.3*b, 0.792, 0.3*b, 0.886 1.967]; % Span
+tv_vec = [1.000, 1.000, 0.560, 0.560 0.500]; % Taper ratio
 % Vv_vec = [0.005 , 0.030, 0.0003, 0.027]; % Volume Coefficient of Vertical Tail
 
 % Wing Location Data
-Lw_vec = [4.958, 2.746, 2.685, 1.1];     % x-location of the wing's leading edge
+Lw_vec = [4.958, 2.746, 2.685, 1.100 1.967];     % x-location of the wing's leading edge
 
-%% 2. CONSTANTS & ASSUMPTIONS
-% --- These values are assumed to be constant across all configurations ---
-a0  = 0.0972;   % 2D lift curve slope for wing airfoil (per radian)(BOE 103)
-a0t = 0.113575; % 2D lift curve slope for tail airfoil (per radian)(NACA 0015)
-
-%% 3. SELECT ACTIVE CONFIGURATION
+%% 2. SELECT ACTIVE CONFIGURATION
 % --- Extracts the data for the chosen 'config' number ---
 Lh = Lh_vec(config);
 bh = bh_vec(config);
 th = th_vec(config);
-Vh  = 0.4;
+Vh  = 0.334;
 
 Lv = Lv_vec(config);
 bv = bv_vec(config);
 tv = tv_vec(config);
-Vv  = 0.04;
+Vv  = 0.021;
 
 Lw = Lw_vec(config);
 
-%% 4. CALCULATIONS
-% --- Main Wing Aspect Ratio ---
+%% 3. SIZING CALCULATIONS
+% --- Main Wing Sizing ---
 AR = b^2 / S;
+c_root = 2*S/(b*(1+t)); % wing root chord
+c_tip = t*c_root;       % wing tip chord
+Lambda_w = atan((c_root-c_tip)/b); % Leading edge sweep angle (radians)
 
 % --- Tail Area Sizing (from Volume Coefficients) ---
 % Vh = (Sh * Lh) / (S * cmac) -> Rearranged for Sh
 Sh = (Vh * S * cmac) / abs(Lh);
-disp(Sh)
+c_root_h = 2*Sh/(bh*(1+th)); % wing root chord
+c_tip_h = th*c_root_h;       % wing tip chord
+cmach = (2/3)*c_root_h*(1+th+th^2)/(1+th);  % wing mean aerodynamic chord
+Lambda_h = atan((c_root_h-c_tip_h)/bh); % Leading edge sweep angle (radians)
+
 % Vv = (Sv * Lv) / (S * b) -> Rearranged for Sv
 Sv = (Vv * S * b) / abs(Lv);
-disp(Sv)
 
 % --- Tail Aspect Ratios ---
 ARh = bh^2 / Sh;
@@ -93,10 +96,16 @@ aileron_span  = 0.4 * b;  % Ailerons span ~40% of the wing (e.g., from 0.5b to 0
 elevator_span = 0.9 * bh; % Elevator span is ~90% of horizontal tail span
 rudder_span   = 0.9 * bv; % Rudder span is ~90% of vertical tail span
 
-% --- Neutral Point Calculation ---
-% Convert 2D lift curve slopes to 3D using lifting-line theory
-a  = a0 / (1 + (a0 / (pi * AR)));
-at = a0t / (1 + (a0t / (pi * ARh)));
+%% 4. NEUTRAL POINT ESTIMATION
+[~, ~, ~, ~, ~, ~, M, ~, ~, ~] = atmosphere(5500, 100);
+eta_h = 0.9; % approximate dynamic pressure ratio from freestream to tail
+
+% 3D Lift-Curve slope estimation using polhamus equation
+kw = 1+((8.2-2.3*Lambda_w)-AR*(0.22-0.153*Lambda_w))/100;
+kh = 1+(AR*(1.87-0.000233*Lambda_h))/100;
+
+a_w = (2*pi*AR)/(2+sqrt(((AR^2*(1-M^2))/kw^2*(1+tan(Lambda_w)^2/(1-M^2)))+4));
+a_h = (2*pi*ARh)/(2+sqrt(((ARh^2*(1-M^2))/kh^2*(1+tan(Lambda_h)^2/(1-M^2)))+4));
 
 % Downwash Calculation (d_epsilon / d_alpha)
 % Note: This requires a separate function 'Downwash_on_Tail' to be defined
@@ -104,14 +113,18 @@ at = a0t / (1 + (a0t / (pi * ARh)));
 deda = Downwash_on_Tail(AR, b, t, Lh);
 
 % Aerodynamic center of the wing/body (assumed at quarter-chord of MAC)
-%corrected to be taken from nose of the aircraft
-xAC = (0.25 * cmac) + Lw;
+% taken from nose of the aircraft
+XAC = (0.25 * cmac) + Lw;
+xAC = XAC/cmac; % non-dimensionalized value w.r.t. cmac
 
-% Non-dimensionalize key longitudinal distances by the MAC
-% h       = (Lw - CG) / cmac;   % Non-dimensional CG location
-h_ac_wb = (Lw - xAC) / cmac;  % Non-dimensional Aerodynamic Center of wing/body
+% Aerodynamic center of the horizontal tail (assumed at quarter-chord of MAC)
+% taken from nose of the aircraft
 
-% Calculate the neutral point
-hn = h_ac_wb + Vh * (at / a) * (1 - deda);
+XACh = (0.25 * cmach) + Lh;
+xACh = XACh/cmac; % non-dimensionalized value w.r.t. cmac
 
+% Calculating the neutral point of the aircraft
+h_num = xAC+a_h/a_w*eta_h*Sh/S*(1-deda)*xACh;
+h_den = 1+a_h/a_w*eta_h*Sh/S*(1-deda);
+hn = h_num/h_den*cmac; % aircraft neutral point w.r.t. the nose (ft)
 end
