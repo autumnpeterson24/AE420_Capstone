@@ -1,4 +1,4 @@
-function [SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, config)
+function [SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, hn, config)
 % REVISON 2.6 (9/24/25)
 %
 % This function calculates the static margin (simplified) and the required
@@ -30,9 +30,9 @@ function [SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, config)
 % --- Please replace these placeholder values with your actual data ---
 
 % Longitudinal locations are measured from the aircraft nose
-Lw_vec     = [5.0, 4.0, 2.8, 1.583]; % x-location of the wing's leading edge
+Lw_vec     = [5.0, 4.0, 2.8, 1.583 0.250]; % x-location of the wing's leading edge
 % Wing-specific geometric properties REPLACE WITH REAL VALUES
-Lambda_vec = [10,  10,  10,  2.5 ]; % Wing sweep angle (degrees)
+Lambda_vec = [10,  10,  10,  2.5,  0.000]; % Wing sweep angle (degrees)
 
 %% 2. CONSTANTS & ASSUMPTIONS
 % --- These values are assumed to be constant across all configurations ---
@@ -46,10 +46,7 @@ Lambda = Lambda_vec(config); % Wing sweep in degrees
 
 %% 4. CALCULATIONS
 % --- Static Margin ---
-% Note: This is a simplified static margin representing the distance from the
-% wing's AC to the CG. A full analysis would use the neutral point (hn).
-xAC = Lw + (0.25 * cmac); % Aerodynamic Center location (assuming quarter-chord)
-SM  = (xAC - CG)/cmac;   % static margin taken in x-distance from the nose 
+SM  = (hn - CG)/cmac;   % static margin taken in x-distance from the nose 
 
 % --- Tail Incidence Angle ---
 % Convert 2D tail lift curve slope to 3D using lifting-line theory
