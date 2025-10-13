@@ -136,7 +136,7 @@ for i = 1:numel(T_levels)
 end
 % 4) Thrust vs velocity for throttle fractions (power-limited)
 throttle_levels = [0.3 0.5 0.7 0.85 1.0];
-V_th_mph = linspace(20,90,40);
+V_th_mph = 0:100;
 V_th_fps = V_th_mph*mph2fps;
 T_th_mat = zeros(numel(throttle_levels), numel(V_th_fps));
 for ii = 1:numel(throttle_levels)
@@ -153,7 +153,7 @@ for ii = 1:numel(throttle_levels)
             Pshaft_W = (CP * rho_in * n^3 * prop_D_ft^5) * ftlbfps2W;
             eta_prop_use = max(etap_fun(J), 0.05);
             Pelec_W  = Pshaft_W / (eta_motor_cru*eta_esc*eta_prop_use);
-            if Pelec_W <= Pavail, Tmax = max(Tmax, T); end
+            if Pelec_W <= Pavail; Tmax = max(Tmax, T); end
         end
         T_th_mat(ii,jj) = Tmax;
     end
