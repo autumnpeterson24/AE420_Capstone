@@ -85,12 +85,13 @@ cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 [D, CDp, CDi, alpha] = aerodynamics(W, S, AR, t, Sh, ARh, th, Sv, ARv, tv, V, Alt, Cfig);
 
 % Call Stability function
-[SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, Cfig);
+[SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, hn, Cfig);
 
 % Call Propulsion function
 [P] = propulsion(V, D, Alt);
 
 % Call Performance function
 [TOFL, Climb, MaxAlt, Time] = performance(W, S, D, P);
+
 
 
