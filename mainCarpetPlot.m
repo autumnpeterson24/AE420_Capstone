@@ -26,7 +26,14 @@ ThrustClimb = [0];
 SurfClimb = [0];
 WeightClimb = [0];
 
-for S = 5:0.1:50
+targetW = 25:5:50;
+tolW    = 0.5;   % widen if hits are sparse
+
+% For TOFL
+cw_TOFL_S = cell(size(targetW));   % S at which W≈target
+cw_TOFL_T = cell(size(targetW));   % T at that S
+
+for S = 5:.1:50
     %Calculating Min Thrust for TOFL
     T = 50;
     TOFL = 0;
@@ -47,6 +54,17 @@ for S = 5:0.1:50
         %[P] = propulsion(V, D, Alt);
         % Call Performance function
         [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D);
+           
+        % ---- Record (S,T) whenever W is close to a target (TOFL loop) ----
+        for k = 1:numel(targetW)
+            if abs(W - targetW(k)) <= tolW
+                % keep at most one point per S for this weight
+                if isempty(cw_TOFL_S{k}) || cw_TOFL_S{k}(end) ~= S
+                    cw_TOFL_S{k}(end+1) = S;
+                    cw_TOFL_T{k}(end+1) = T;
+                end
+            end
+        end
 
         T = T - .1;
         counterT = counterT +1;
@@ -92,5 +110,20 @@ xlim([0, 10])
 plot(WeightTOFL./SurfTOFL,ThrustTOFL./WeightTOFL)
 plot(WeightClimb./SurfClimb,ThrustClimb./WeightClimb)
 xlabel('Wing Loading W/S'); ylabel('Thrust-to-Weight T/W')
+
+for k = 1:numel(targetW)
+    Wk = targetW(k);
+
+    % TOFL constant-W line (connect across S values)
+    if ~isempty(cw_TOFL_S{k})
+        x_to = Wk ./ cw_TOFL_S{k};   % W/S
+        y_to = cw_TOFL_T{k} ./ Wk;   % T/W
+        [x_to, ord] = sort(x_to);    % sort for a clean line
+        y_to = y_to(ord);
+        plot(x_to, y_to, '-', 'LineWidth', 1.1, 'DisplayName', sprintf('W=%g (TOFL)', Wk));
+    end
+end
+legend('Location','best'); grid on
+
 toc
 
