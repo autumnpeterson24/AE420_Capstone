@@ -18,7 +18,7 @@ rfuselage = [10.74887755/2 8/2 25.26/2 10.08750493/2]/12;
 rfuselage = rfuselage(ConfigNum);
 Lfuselage = [98 48 86.01 48]/12;
 Lfuselage = Lfuselage(ConfigNum);
-Lw = [59.49 24 32.22 13.2]/12;
+Lw = [59.49 34.788 32.22 15.3]/12;
 Lw = Lw(ConfigNum);
 
 %% calculation of secondary distances
@@ -288,6 +288,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
