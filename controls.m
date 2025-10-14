@@ -40,19 +40,19 @@ function [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, co
 
 
 % Horizontal Stabilizer Data
-Lh_vec = [2.478, 4.033, 4.000, 2.964 2.300]; % Moment arm (c/4 wing to c/4 tail)
-bh_vec = [0.4*b, 2.742, 0.3*b, 2.972 3.300]; % Span
-th_vec = [1.000, 1.000, 1.000, 0.702 0.600]; % Taper ratio
+Lh_vec = [4.033, 2.478, 2.964, 4.000, 2.300]; % Moment arm (c/4 wing to c/4 tail)
+bh_vec = [2.742, 0.4*b, 2.972, 0.3*b 3.300]; % Span
+th_vec = [1.000, 1.000, 0.702, 1.000, 0.600]; % Taper ratio
 % Vh_vec = [ 0.620, 0.875, 1.916, 1.073]; % Volume Coefficient of Horizontal Tail
 
 % Vertical Stabilizer Data
-Lv_vec = [2.478, 4.033, 4.000, 4.890 2.300]; % Moment arm (c/4 wing to c/4 tail)
-bv_vec = [0.3*b, 0.792, 0.15*b, 0.886 1.967]; % Span
-tv_vec = [1.000, 1.000, 1.000, 0.560 0.500]; % Taper ratio
+Lv_vec = [4.033, 2.478, 4.890, 4.000, 2.300]; % Moment arm (c/4 wing to c/4 tail)
+bv_vec = [0.792, 0.3*b, 0.886, 0.15*b, 1.967]; % Span
+tv_vec = [1.000, 1.000, 0.560, 1.000, 0.500]; % Taper ratio
 % Vv_vec = [0.005 , 0.030, 0.0003, 0.027]; % Volume Coefficient of Vertical Tail
 
 % Wing Location Data
-Lw_vec = [2.889, 4.000, 1.275, 1.100 2.5]; % x-location of the wing's leading edge
+Lw_vec = [4.000, 2.889, 1.100, 1.275 2.5]; % x-location of the wing's leading edge
 
 %% 2. SELECT ACTIVE CONFIGURATION
 % --- Extracts the data for the chosen 'config' number ---
