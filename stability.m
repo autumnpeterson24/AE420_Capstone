@@ -29,10 +29,8 @@ function [SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, hn, config)
 % --- Each column represents a different aircraft configuration ---
 % --- Please replace these placeholder values with your actual data ---
 
-% Longitudinal locations are measured from the aircraft nose
-Lw_vec     = [5.0, 4.0, 2.8, 1.583 0.250]; % x-location of the wing's leading edge
 % Wing-specific geometric properties REPLACE WITH REAL VALUES
-Lambda_vec = [10,  10,  10,  2.5,  0.000]; % Wing sweep angle (degrees)
+Lambda_vec = [10,  0,  10,  0,  0.000]; % Wing sweep angle (degrees)
 
 %% 2. CONSTANTS & ASSUMPTIONS
 % --- These values are assumed to be constant across all configurations ---
@@ -41,7 +39,6 @@ Cm0 = -0.09;   % 2D airfoil moment coefficient at AoA=0 (BOE103)
 
 %% 3. SELECT ACTIVE CONFIGURATION
 % --- Extracts the data for the chosen 'config' number ---
-Lw     = Lw_vec(config);
 Lambda = Lambda_vec(config); % Wing sweep in degrees
 
 %% 4. CALCULATIONS
