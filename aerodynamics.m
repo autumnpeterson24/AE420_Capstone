@@ -1,10 +1,6 @@
-function [D, CDp, CDi, alpha] = aerodynamics(W, S,AR,t,Sh,ARh,th,Sv,ARv,tv,V,Alt,Cfig);
+function [D, CDp, CDi, alpha] = aerodynamics(W, S_w,AR_w,taper_w,S_h,AR_h,taper_h,S_v,AR_v,taper_v,V,h,Cfig);
 
 %% Initialize
-
-% Operating Environment Inputs
-h = Alt;  % takeoff elevation (ft)
-V = V;   % cruise velocity (ft/s)
 
 % Call atmosphere function
 [~, ~, ~, ~, ~, ~, mach, REL, q] = atmosphere(h, V);  %	Note: REL is the Reynolds number per unit length
@@ -15,38 +11,22 @@ V = V;   % cruise velocity (ft/s)
 weight = W;     % max takeoff weight (lb)
 
 % Wing Geometry
-S_w = S;      % area (ft^2)
-AR_w = AR;      % aspect ratio
 b_w = sqrt(AR_w * S_w); % wing span
-taper_w = t; % taper ratio
 c_w_root = 2*S_w/(b_w*(1+taper_w)); % wing root chord
-c_w_tip = taper_w*c_w_root; % wing tip chord
 c_w = (2/3)*c_w_root*(1+taper_w+taper_w^2)/(1+taper_w); % mean aero chord
 tc_w = 0.1;  % thickness-to-chord ratio
 Cl_a_w = 0.0972;
 alpha_0 = -4.055;
-supercrit = 0; % is the wing supercritical?
-lex_w = 0.0;     % leading edge extension (as fraction of root chord)
-tex_w = 0.0;     % trailing edge extension (as fraction of root chord)
-chordextspan=0.3;
 
 % Horizontal Tail Geometry
-S_h = Sh;  % estimated area 
-AR_h = ARh;     % aspect ratio
 b_h = sqrt(AR_h * S_h); % span
-taper_h = th;  % taper
 c_h_root = 2*S_h/(b_h*(1+taper_h)); % root chord
-c_h_tip = taper_h*c_h_root; % tip chord
 c_h = (2/3)*c_h_root*(1+taper_h+taper_h^2)/(1+taper_h); % mean aero chord
 tc_h= 0.15; % thickness-to-chord ratio
 
 % Vertical Tail Geometry
-S_v = Sv; % area 
-AR_v = ARv;     % aspect ratio
 b_v = sqrt(AR_v * S_v); % span
-taper_v = tv;  % taper
 c_v_root = 2*S_v/(b_v*(1+taper_v)); % root chord
-c_v_tip = taper_v*c_v_root; % tip chord
 c_v = (2/3)*c_v_root*(1+taper_v+taper_v^2)/(1+taper_v); % mean aero chord
 tc_v = 0.15;% thickness-to-chord ratio
 
@@ -54,94 +34,22 @@ tc_v = 0.15;% thickness-to-chord ratio
 fmarkup = 1.20;   % parasite drag correction for roughness
 
 %% Aircraft Geometries - Config Dependant
-if Cfig == 1
+if Cfig == 2
 
     % Wing Geometry
-    sweep_w = 0;    % sweep
-    dihedral = 0;  % dihedral
-    
-    % Horizontal Tail Geometry
-    sweep_h = 15; % sweep
-    dihedral_h = 0.0; % dihedral
-    
-    % Vertical Tail Geometry
-    sweep_v = 0; % sweep
-    
-    % Fuselage Geometry
-    L_fuse = 8.167; % total length of fuselage (ft)
-    D_fuse = 1;   % fuselage diameter (ft)
-    L_nose_cone = 2.5*D_fuse; % nose cone length (based on fineness ratio)
-    L_tail_cone = 2.5*D_fuse; % tail cone length (based on fineness ratio)
-    
-    % Misc Inputs
-    flapspan = 0.627*b_w; % flap span, as a fraction of wing span
-    flapchord = 0.36*c_w; % flap chord, as a fraction of wing MAC
-
-    % Form Factors and efficiencies
-    k_w = 1.2; % Form Factor  (from sweep and t/c)
-    u = 0.99; % estimated
-    s_w = .98; % determined from graph and D_fuse/Wingspan
-    k_F = 1.15; % Form factor (from graph)
-    k_h = 1.35; % Form Factor  (from sweep and t/c)
-    s_h = .83; % determined from graph and D_fuse/stabspan
-    k_v = 1.35; % Form Factor  (from sweep and t/c)
-
-elseif Cfig == 2
-
-    % Wing Geometry
-    sweep_w = 0;    % sweep
-    dihedral = 0;  % dihedral
-    
+    sweep_w = 0;    % sweep    
     
     % Horizontal Tail Geometry
     sweep_h = 0; % sweep
-    dihedral_h = 0.0; % dihedral
     
     % Vertical Tail Geometry
     sweep_v = 0; % sweep
     
     % Fuselage Geometry
-    L_fuse = 4.713; % total length of fuselage (ft)
-    D_fuse = 0.5;   % fuselage diameter (ft)
+    L_fuse = 4; % total length of fuselage (ft)
+    D_fuse = 1;   % fuselage diameter (ft)
     L_nose_cone = 1.5*D_fuse; % nose cone length (based on fineness ratio)
     L_tail_cone = 1.5*D_fuse; % tail cone length (based on fineness ratio)
-    
-    % Misc Inputs
-    flapspan = 0.627*b_w; % flap span, as a fraction of wing span
-    flapchord = 0.36*c_w; % flap chord, as a fraction of wing MAC
-
-    % Form Factors and efficiencies
-    k_w = 1.2; % Form Factor  (from sweep and t/c)
-    u = 0.99; % estimated
-    s_w = .98; % determined from graph and D_fuse/Wingspan
-    k_F = 1.15; % Form factor (from graph)
-    k_h = 1.35; % Form Factor  (from sweep and t/c)
-    s_h = .83; % determined from graph and D_fuse/stabspan
-    k_v = 1.35; % Form Factor  (from sweep and t/c)
-
-elseif Cfig == 3
-
-    % Wing Geometry
-    sweep_w = 0;    % sweep
-    dihedral = 0;  % dihedral
-    
-    
-    % Horizontal Tail Geometry
-    sweep_h = 0; % sweep
-    dihedral_h = 0.0; % dihedral
-    
-    % Vertical Tail Geometry
-    sweep_v = 0; % sweep
-    
-    % Fuselage Geometry
-    L_fuse = 7.02; % total length of fuselage (ft)
-    D_fuse = 1;   % fuselage diameter (ft)
-    L_nose_cone = 0.5*D_fuse; % nose cone length (based on fineness ratio)
-    L_tail_cone = 2.5*D_fuse; % tail cone length (based on fineness ratio)
-    
-    % Misc Inputs
-    flapspan = 0.627*b_w; % flap span, as a fraction of wing span
-    flapchord = 0.36*c_w; % flap chord, as a fraction of wing MAC
 
     % Form Factors and efficiencies
     k_w = 1.2; % Form Factor  (from sweep and t/c)
@@ -152,35 +60,29 @@ elseif Cfig == 3
     s_h = .83; % determined from graph and D_fuse/stabspan
     k_v = 1.35; % Form Factor  (from sweep and t/c)
 
+
 elseif Cfig == 4
 
     % Wing Geometry
-    sweep_w = 0;    % sweep
-    dihedral = 0;  % dihedral
-    
+    sweep_w = 0;    % sweep    
     
     % Horizontal Tail Geometry
     sweep_h = 10; % sweep
-    dihedral_h = 0.0; % dihedral
     
     % Vertical Tail Geometry
     sweep_v = 10; % sweep
     
     % Fuselage Geometry
-    L_fuse = 5; % total length of fuselage (ft)
+    L_fuse = 4; % total length of fuselage (ft)
     D_fuse = 1;   % fuselage diameter (ft)
     L_nose_cone = 1.5*D_fuse; % nose cone length (based on fineness ratio)
     L_tail_cone = 1.5*D_fuse; % tail cone length (based on fineness ratio)
-    
-    % Misc Inputs
-    flapspan = 0.627*b_w; % flap span, as a fraction of wing span
-    flapchord = 0.36*c_w; % flap chord, as a fraction of wing MAC
 
     % Form Factors and efficiencies
     k_w = 1.2; % Form Factor  (from sweep and t/c)
     u = 0.99; % estimated
     s_w = .98; % determined from graph and D_fuse/Wingspan
-    k_F = 1.3; % Form factor (from graph)
+    k_F = 1.25; % Form factor (from graph)
     k_h = 1.35; % Form Factor  (from sweep and t/c)
     s_h = .83; % determined from graph and D_fuse/stabspan
     k_v = 1.35; % Form Factor  (from sweep and t/c)
@@ -255,7 +157,7 @@ C_f_v = c_f_inc_v .*(Tinf_Tp_v).*(1./Rp_Rinf_v).^0.2; % Coefficent of friction
 S_wett_v = 2*(1+(0.2*(tc_v)))*S_v; % Wetted area
 S_cs_v = S_v; % Control surface sizing
 f_gap_v = 0.0002*((cos(sweep_v))^2)*S_cs_v; % Control surface gap drag
-C_D_v = 2*k_v*(C_f_v+(f_gap_v/S_v))*(S_wett_v/S_w); % Coefficent of  drag (also accounting for the H-tail)
+C_D_v = k_v*(C_f_v+(f_gap_v/S_v))*(S_wett_v/S_w); % Coefficent of  drag
 
 %% Finalize Drag Totals
 
@@ -268,11 +170,18 @@ D_tot =C_D*q*S_w;
 
 %% Alpha
 
-e = 2/(2-AR+sqrt(4+AR^2*(1+tand(t)))); % eq1, Span Efficiency
-CL_a_w =  Cl_a_w./((1+(57.3.*Cl_a_w)./(pi.*e.*AR))); % eq2, 3D Lift Curve Slope
+e = 2/(2-AR_w+sqrt(4+AR_w^2*(1+tand(taper_w)))); % eq1, Span Efficiency
+CL_a_w =  Cl_a_w./((1+(57.3.*Cl_a_w)./(pi.*e.*AR_w))); % eq2, 3D Lift Curve Slope
 alpha = weight / (q * S_w *CL_a_w) + alpha_0;
 
 %% Output
+
+CDdisp = [ C_D_p_w  C_D_i_w             C_D_w;
+            C_D_F   0                     C_D_F;
+            C_D_p_h C_D_i_h             C_D_h;
+            C_D_v   0                     C_D_v;
+            C_D_m   C_D_vis_h+C_D_vis_w   C_D_m+C_D_vis_h+C_D_vis_w;
+            C_D_p   C_D_i                 C_D];
 
 CDp = C_D_p;   % parasite drag coefficient
 CDi = C_D_i;   % induced drag coefficient
