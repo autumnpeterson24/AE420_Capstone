@@ -231,6 +231,16 @@ plot(cgX, cgY, 'kx', 'MarkerSize',8, 'LineWidth',2);
 text(cgX, cgY, '  CG','Color','k','FontWeight','bold');
 grid on;
 hold off
+
+%% Bill of Materials
+if TablePrint == 1
+    d = dictionary(names, 0); 
+    for ii = 1:numel(names)
+        d(names(ii)) = d(names(ii))+W(ii);
+    end
+    % disp(table(PartNames, PartWeight))
+    disp(d)
+end
 end
 
 function [A] = trap(Array_X, Array_Y)
@@ -288,6 +298,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
