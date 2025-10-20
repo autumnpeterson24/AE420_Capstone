@@ -159,9 +159,6 @@ Cfig4 = {
  'HSpar'         HSpar/2      Lh+MACh/3  0       0.1              bh;
  'VStabSkin'     VStabSkin    Lv        0         MACv             0.1;
  'VSpar'         VSpar        Lv+MACv/3  0   0.1              0.1;
-
- 'VStabSkin'     VStabSkin    Lv        0         MACv             0.1;
- 'VSpar'         VSpar        Lv+MACv/3  0        0.1              0.1; 
  'Empenage'      Empenage     Lfuselage  0        (Lh+MACh)-Lfuselage     0.1;
     % propulsion
  'Motor'         1.5        Lw+MAC           1.5       0.25            0.5;
@@ -299,6 +296,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
