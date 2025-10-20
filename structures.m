@@ -233,12 +233,13 @@ grid on;
 hold off
 
 %% Bill of Materials
+% converts the data of the chosen configuration to a bill of materials in the form of a dictionary
+% part data can be used for tradeoff analysis and have the same name as the config part definitions
 if TablePrint == 1
     d = dictionary(names, 0); 
     for ii = 1:numel(names)
         d(names(ii)) = d(names(ii))+W(ii);
     end
-    % disp(table(PartNames, PartWeight))
     disp(d)
 end
 end
@@ -298,6 +299,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
