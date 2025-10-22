@@ -83,7 +83,7 @@ Cfig1 = {
  'Actuator'      0.15       Lw+MAC/2    -b/4    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2)  0.5    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2) -0.5    0.2             0.2;
- 'payload'       3          0.5          0      1               0.7;
+ 'Payload'       3          0.5          0      1               0.7;
     % misc
  'LandGear'      1.2        3            0      0.2             0.1;
  'LandGear'      1.2        Lw+MAC/2     1.6    0.2             0.1;
@@ -97,8 +97,8 @@ Cfig2 = {
  'FuselSkin'     Fuselage   0.0        0       Lfuselage        rfuselage*2;
  'WingSkin'      WingSkin   Lw         0       MAC              b;
  'WingSpar'      WingSpar   Lw+MAC/3   0       0.1              b;
- 'Empenage'      Empenage   Lw+MAC/3  -bh/2    Empenage_len     0.1;
- 'Empenage'      Empenage   Lw+MAC/3   bh/2    Empenage_len     0.1;
+ 'Empennage'      Empenage   Lw+MAC/3  -bh/2    Empenage_len     0.1;
+ 'Empennage'      Empenage   Lw+MAC/3   bh/2    Empenage_len     0.1;
  'HStabSkin'     HStabSkin  Lh         0       MACh                bh;
  'HSpar'         HSpar      Lh+MACh/3  0       0.1              bh;
     % propulsion
@@ -111,7 +111,7 @@ Cfig2 = {
  'Actuator'      0.15       Lw+MAC/2    -b/4    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2)  0.5    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2) -0.5    0.2             0.2;
- 'payload'       3          0.5          0      1               0.7;
+ 'Payload'       3          0.5          0      1               0.7;
     % misc
  'LandGear'      1.2        3            0      0.2             0.1;
  'LandGear'      1.2        Lw+MAC/2     1.6    0.2             0.1;
@@ -141,7 +141,7 @@ Cfig3 = {
  'Actuator'      0.15       Lw+MAC/2    -b/4    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2)  rfuselage+bh/8    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2) -rfuselage-bh/4    0.2             0.2;
- 'payload'       3          0.5          0      1               0.7;
+ 'Payload'       3          0.5          0      1               0.7;
     % misc
  'LandGear'      1.2        3            0      0.2             0.1;
  'LandGear'      1.2        Lw+MAC/2     1.6    0.2             0.1;
@@ -159,7 +159,7 @@ Cfig4 = {
  'HSpar'         HSpar/2      Lh+MACh/3  0       0.1              bh;
  'VStabSkin'     VStabSkin    Lv        0         MACv             0.1;
  'VSpar'         VSpar        Lv+MACv/3  0   0.1              0.1;
- 'Empenage'      Empenage     Lfuselage  0        (Lh+MACh)-Lfuselage     0.1;
+ 'Empennage'      Empenage     Lfuselage  0        (Lh+MACh)-Lfuselage     0.1;
     % propulsion
  'Motor'         1.5        Lw+MAC           1.5       0.25            0.5;
  'Motor'         1.5        Lw+MAC          -1.5       0.25            0.5;
@@ -172,7 +172,7 @@ Cfig4 = {
  'Actuator'      0.15       Lw+MAC/2    -b/4    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2)  rfuselage+bh/8    0.2             0.2;
  'Actuator'      0.15       Lh+(MACh/2) -rfuselage-bh/4    0.2             0.2;
- 'payload'       3          0.5          0      1               0.7;
+ 'Payload'       3          0.5          0      1               0.7;
     % misc
  'LandGear'      1.2        3            0      0.2             0.1;
  'LandGear'      1.2        Lw+MAC/2     1.6    0.2             0.1;
@@ -298,6 +298,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
