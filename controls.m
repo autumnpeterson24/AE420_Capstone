@@ -59,7 +59,7 @@ Lw_vec = [4.000, 2.889, 1.100, 1.275 2.5]; % x-location of the wing's leading ed
 Lh = Lh_vec(config);
 bh = bh_vec(config);
 th = th_vec(config);
-Vh  = 0.4;
+Vh  = 0.6;
 
 Lv = Lv_vec(config);
 bv = bv_vec(config);
@@ -127,3 +127,4 @@ h_num = xAC+a_h/a_w*eta_h*Sh/S*(1-deda)*xACh;
 h_den = 1+a_h/a_w*eta_h*Sh/S*(1-deda);
 hn = h_num/h_den*cmac; % aircraft neutral point w.r.t. the nose (ft)
 end
+
