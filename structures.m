@@ -238,6 +238,8 @@ if TablePrint == 1
         d(names(ii)) = d(names(ii))+W(ii);
     end
     disp(d)
+    E = entries(d);
+    piechart(E.Value, E.Key)
 end
 end
 
@@ -296,6 +298,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
