@@ -1,4 +1,4 @@
-function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, ConfigNum)
+function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, ConfigNum, TablePrint)
 % calculates the total weight and the Cg location in the X and Y in
 % reference to the datum of the nose in ft
 % Inputs include:
@@ -296,6 +296,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
