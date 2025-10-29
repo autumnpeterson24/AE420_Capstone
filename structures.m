@@ -123,7 +123,7 @@ Cfig2 = {
  'Landing Gear'      2.0        Lw+MAC/2    -1.6    0.5             0.1;
  'Capture Mechanism'    2.0        Lw-0.7       0.9    0.5             1;
  };
- 
+
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
 Cfig3 = {
     % structural
@@ -397,7 +397,6 @@ dat = [1.000084  0.001257
   0.998920 -0.001330
   0.999916 -0.001257];
 
-
 %input from dat file of airfoil
 NACA2412_Coord = dat*AvgChord;
 
@@ -409,25 +408,3 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
