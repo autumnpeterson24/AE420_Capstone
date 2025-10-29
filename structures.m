@@ -11,6 +11,7 @@ function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, 
 % Lfuselage = length of the fuselage
 % rfuselage = radius of a cylindrial fuselage
 % ConfigNum = type of configuration (1-4) based on the initial concepts)
+% PrintOutput = booleen 0 or 1 for if the code should output the plot and pie chard breakdown
 % lbs and ft are the base units out for W and CG. CG datum is from the nose
 
 %% Placeholder default values for Lh, Lv, Lw
@@ -408,6 +409,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
