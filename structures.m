@@ -95,13 +95,13 @@ Cfig1 = {
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
 Cfig2 = {
     % structural
- 'Fusel Skin'     Fuselage   0.0        0       Lfuselage        rfuselage*2;
+ 'Fusel Skin'     Fuselage+2   0.0        0       Lfuselage        rfuselage*2;
  'Wing Skin'      WingSkin   Lw         0       MAC              b;
  'Wing Spar'      WingSpar   Lw+MAC/3   0       0.1              b;
  'Empennage'      Empenage   Lw+MAC/3  -bh/2    Empenage_len     0.1;
  'Empennage'      Empenage   Lw+MAC/3   bh/2    Empenage_len     0.1;
- 'Horizontal Stab Skin'    HStabSkin/cosd(50)  Lh         0       MACh                bh;
- 'Horizontal Spar'         HSpar      Lh+MACh/3  0       0.1              bh;
+ 'Horizontal Stab Skin'    HStabSkin/cosd(50)*1.366  Lh         0       MACh                bh;
+ 'Horizontal Spar'         HSpar/cosd(50)*1.366      Lh+MACh/3  0       0.1              bh;
     % propulsion
  'Motor'         0.5          Lfuselage           0       0.25            0.5;
  'Prop'          0.125       Lfuselage+0.25      0       0.08            1.6;
@@ -123,7 +123,7 @@ Cfig2 = {
  'Landing Gear'      2.0        Lw+MAC/2    -1.6    0.5             0.1;
  'Capture Mechanism'    2.0        Lw-0.7       0.9    0.5             1;
  };
-
+ 
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
 Cfig3 = {
     % structural
@@ -409,6 +409,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
