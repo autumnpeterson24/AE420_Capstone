@@ -47,7 +47,7 @@ th_vec = [1.000, 1.000, 0.702, 1.000, 0.600]; % Taper ratio
 
 % Vertical Stabilizer Data
 Lv_vec = [4.033, 2.478, 4.890, 4.000, 2.300]; % Moment arm (c/4 wing to c/4 tail)
-bv_vec = [0.792, 0.3*b, 0.886, 0.15*b, 1.967]; % Span
+bv_vec = [0.792, 1.000, 0.886, 0.15*b, 1.967]; % Span
 tv_vec = [1.000, 1.000, 0.560, 1.000, 0.500]; % Taper ratio
 % Vv_vec = [0.005 , 0.030, 0.0003, 0.027]; % Volume Coefficient of Vertical Tail
 
@@ -84,7 +84,9 @@ cmach = (2/3)*c_root_h*(1+th+th^2)/(1+th);  % wing mean aerodynamic chord
 Lambda_h = atan((c_root_h-c_tip_h)/bh); % Leading edge sweep angle (radians)
 
 % Vv = (Sv * Lv) / (S * b) -> Rearranged for Sv
-Sv = (Vv * S * b) / abs(Lv);
+% Sv = (Vv * S * b) / abs(Lv);
+cv = cmach; % set v-stab chord length equal to h-stab
+Sv = cv*bv; % V-stab surface area ft^2
 
 % --- Tail Aspect Ratios ---
 ARh = bh^2 / Sh;
@@ -127,4 +129,5 @@ h_num = xAC+a_h/a_w*eta_h*Sh/S*(1-deda)*xACh;
 h_den = 1+a_h/a_w*eta_h*Sh/S*(1-deda);
 hn = h_num/h_den*cmac; % aircraft neutral point w.r.t. the nose (ft)
 end
+
 
