@@ -61,12 +61,12 @@ clear variables
 clc
 
 % Design variable choices
-V = 15;      % flight velocity (ft/s)
-Alt = 12000; % flight altitude (ft)
+V = 88;      % flight velocity (ft/s)
+Alt = 5000; % flight altitude (ft)
 b = 10;      % wing span (ft)
-cavg = 0.5;  % average wing chord length (ft)
-t = 0.7;     % wing taper ratio
-Cfig = 2;    % Config Selection
+cavg = 1.111;  % average wing chord length (ft)
+t = 1;     % wing taper ratio
+Cfig = 4;    % Config Selection
 % Calculated properties
 S = b*cavg;     % wing area (in^2)
 AR = b^2/S;     % wing aspect ratio
@@ -92,6 +92,7 @@ cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 
 % Call Performance function
 [TOFL, Climb, MaxAlt, Time] = performance(W, S, D, P);
+
 
 
 
