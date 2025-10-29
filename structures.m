@@ -102,16 +102,22 @@ Cfig2 = {
  'HStabSkin'     HStabSkin  Lh         0       MACh                bh;
  'HSpar'         HSpar      Lh+MACh/3  0       0.1              bh;
     % propulsion
- 'Motor'         2          Lfuselage           0       0.25            0.5;
- 'Prop'          0.25       Lfuselage+0.25      0       0.08            1.6;
+ 'Motor'         0.5          Lfuselage           0       0.25            0.5;
+ 'Prop'          0.125       Lfuselage+0.25      0       0.08            1.6;
     % electrical
- 'Battery'       3.4        2            0      0.8             0.6;
+ 'Battery'       5.2        2            0      0.8             0.6;
  'Electronics'   0.4        3.5          0      0.5             0.5;
- 'Actuator'      0.15       Lw+MAC/2     b/4    0.2             0.2;
- 'Actuator'      0.15       Lw+MAC/2    -b/4    0.2             0.2;
- 'Actuator'      0.15       Lh+(MACh/2)  0.5    0.2             0.2;
- 'Actuator'      0.15       Lh+(MACh/2) -0.5    0.2             0.2;
- 'Payload'       3          0.5          0      1               0.7;
+ 'Radio'         0.0625        3.5          0      0.5             0.5;
+ 'Autopilot'     0.52        3.5          0      0.5             0.5;
+ 'Receiver'      0.07        3.5          0      0.5             0.5;
+ 'Electronics'   0.4        3.5          0      0.5             0.5;
+ 'BEC'           0.3        3.5          0      0.5             0.5;
+ 'Electronics'   0.4        3.5          0      0.5             0.5;
+
+ 'Actuator'      0.25       Lw+MAC/2     b/4    0.2             0.2;
+ 'Actuator'      0.25       Lw+MAC/2    -b/4    0.2             0.2;
+ 'Actuator'      0.25       Lh+(MACh/2)  0.5    0.2             0.2;
+ 'Actuator'      0.25       Lh+(MACh/2) -0.5    0.2             0.2;
     % misc
  'LandGear'      1.2        3            0      0.2             0.1;
  'LandGear'      1.2        Lw+MAC/2     1.6    0.2             0.1;
@@ -401,6 +407,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
