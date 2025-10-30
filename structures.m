@@ -95,7 +95,7 @@ Cfig1 = {
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
 Cfig2 = {
     % structural
- 'Fusel Skin'     Fuselage+2   0.0        0       Lfuselage        rfuselage*2;
+ 'Fuselage Skin'     Fuselage+2   0.0        0       Lfuselage        rfuselage*2;
  'Wing Skin'      WingSkin   Lw         0       MAC              b;
  'Wing Spar'      WingSpar   Lw+MAC/3   0       0.1              b;
  'Empennage'      Empenage   Lw+MAC/3  -bh/2    Empenage_len     0.1;
@@ -408,3 +408,4 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
