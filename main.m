@@ -78,7 +78,7 @@ cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, Cfig);
 
 % Call Structures function
-[W, CG] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, Cfig);
+[W, CG] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, Cfig, PrintOutput);
 %   Note: Structures and Controls will need to agree on how CG is defined.
 
 % Call Aerodynamics function
@@ -92,6 +92,7 @@ cmac = (2/3)*c_root*(1+t+t^2)/(1+t);  % wing mean aerodynamic chord
 
 % Call Performance function
 [TOFL, Climb, MaxAlt, Time] = performance(W, S, D, P);
+
 
 
 
