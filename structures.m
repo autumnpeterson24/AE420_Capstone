@@ -111,6 +111,7 @@ Cfig2 = {
  'Autopilot'     0.52       0.6          0      0.24            0.325;
  'Receiver'      0.07       0.85         0      0.24            0.15;
  'BEC'           0.3        1            0      0.1             0.17;
+ 'Payload'       3          2            0      0.7             0.5;
 
  'Actuator'      0.25       Lw+MAC/2     b/4    0.2             0.2;
  'Actuator'      0.25       Lw+MAC/2    -b/4    0.2             0.2;
@@ -176,6 +177,7 @@ Cfig4 = {
  'Autopilot'     0.52       0.6          0      0.24            0.325;
  'Receiver'      0.07       0.85         0      0.24            0.15;
  'BEC'           0.3        1            0      0.1             0.17;
+ 'Payload'       3          2            0      0.7             0.5;
  
  'Actuator'      0.25       Lw+MAC/2     b/4    0.2             0.2;
  'Actuator'      0.25       Lw+MAC/2    -b/4    0.2             0.2;
@@ -408,4 +410,5 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
