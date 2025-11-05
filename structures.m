@@ -92,37 +92,37 @@ Cfig1 = {
  'CaptrMechn'    1.5        Lw-0.7       0.9    0.5             1;
  };
 
-%     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
+%[Name,                 Weight,                  X_lead,        Y_lead, LengthX,     LengthY    ]
 Cfig2 = {
     % structural
- 'Fuselage Skin'     Fuselage+2   0.0        0       Lfuselage        rfuselage*2;
- 'Wing Skin'      WingSkin   Lw         0       MAC              b;
- 'Wing Spar'      WingSpar   Lw+MAC/3   0       0.1              b;
- 'Empennage'      Empenage   Lw+MAC/3  -bh/2    Empenage_len     0.1;
- 'Empennage'      Empenage   Lw+MAC/3   bh/2    Empenage_len     0.1;
- 'Horizontal Stab Skin'    HStabSkin/cosd(50)*1.366  Lh         0       MACh                bh;
- 'Horizontal Spar'         HSpar/cosd(50)*1.366      Lh+MACh/3  0       0.1              bh;
+ 'Fusel Skin          ' Fuselage+2               0.0            0       Lfuselage    rfuselage*2;
+ 'Wing Skin           ' WingSkin                 Lw             0       MAC          b          ;
+ 'Wing Spar           ' WingSpar                 Lw+MAC/3       0       0.1          b          ;
+ 'Empennage           ' Empenage                 Lw+MAC/3      -bh/2    Empenage_len 0.1        ;
+ 'Empennage           ' Empenage                 Lw+MAC/3       bh/2    Empenage_len 0.1        ;
+ 'Horizontal Stab Skin' HStabSkin/cosd(50)*1.366 Lh             0       MACh         bh         ;
+ 'Horizontal Spar     ' HSpar/cosd(50)*1.366     Lh+MACh/3      0       0.1          bh         ;
     % propulsion
- 'Motor'         0.5          Lfuselage           0       0.25            0.5;
- 'Prop'          0.125       Lfuselage+0.25      0       0.08            1.6;
+ 'Motor               ' 1.285*2.2                Lfuselage      0       0.25         0.5        ;
+ 'Prop                ' 0.125                    Lfuselage+0.25 0       0.08         1.6        ;
     % electrical
- 'Battery'       5.2        0.2          0      0.2             0.7;
- 'Radio'         0.0625     0.4          0      0.2             0.43;
- 'Autopilot'     0.52       0.6          0      0.24            0.325;
- 'Receiver'      0.07       0.85         0      0.24            0.15;
- 'BEC'           0.3        1            0      0.1             0.17;
- 'Payload'       3          2            0      0.7             0.5;
+ 'Battery             ' 5.2                      5/12           0       0.2          0.7        ;
+ 'Radio               ' 0.0625                   5/12           0       0.2          0.43       ;
+ 'Autopilot           ' 0.52                     1              0       0.24         0.325      ;
+ 'Receiver            ' 0.07                     5/12           0       0.24         0.15       ;
+ 'BEC                 ' 0.3                      1              0       0.1          0.17       ;
+ 'Payload             ' 3                        1              0       0.7          0.5        ;
 
- 'Actuator'      0.25       Lw+MAC/2     b/4    0.2             0.2;
- 'Actuator'      0.25       Lw+MAC/2    -b/4    0.2             0.2;
- 'Actuator'      0.25       Lh+(MACh/2)  0.5    0.2             0.2;
- 'Actuator'      0.25       Lh+(MACh/2) -0.5    0.2             0.2;
+ 'Actuator            ' 0.25                     Lw+MAC/2       b/4     0.2          0.2        ;
+ 'Actuator            ' 0.25                     Lw+MAC/2      -b/4     0.2          0.2        ;
+ 'Actuator            ' 0.25                     Lh+(MACh/2)    0.5     0.2          0.2        ;
+ 'Actuator            ' 0.25                     Lh+(MACh/2)   -0.5     0.2          0.2        ;
 
     % misc
- 'Landing Gear'      2.0        1            0      0.5             0.1;
- 'Landing Gear'      2.0        Lw+MAC/2     1.6    0.5             0.1;
- 'Landing Gear'      2.0        Lw+MAC/2    -1.6    0.5             0.1;
- 'Capture Mechanism'    2.0        Lw-0.7       0.9    0.5             1;
+ 'Landing Gear        ' 1.5                      1              0       0.5          0.1        ;
+ 'Landing Gear        ' 1.5                      Lw+MAC/2       1.6     0.5          0.1        ;
+ 'Landing Gear        ' 1.5                      Lw+MAC/2      -1.6     0.5          0.1        ;
+ 'Capture Mechanism   ' 2.0                      Lw-0.7         0.9     0.5          1.2        ;
  };
 
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
@@ -410,5 +410,6 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
