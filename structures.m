@@ -103,10 +103,10 @@ Cfig2 = {
  'Horizontal Stab Skin' HStabSkin/cosd(50)*1.366 Lh             0       MACh         bh         ;
  'Horizontal Spar     ' HSpar/cosd(50)*1.366     Lh+MACh/3      0       0.1          bh         ;
     % propulsion
- 'Motor               ' 1.285*2.2                Lfuselage      0       0.25         0.5        ;
- 'Prop                ' 0.125                    Lfuselage+0.25 0       0.08         1.6        ;
+ 'Motor               ' 2.83                     Lfuselage      0       0.25         0.5        ;
+ 'Prop                ' 0.125                    Lfuselage+0.25 0       0.08         2.08       ;
     % electrical
- 'Battery             ' 5.2                      5/12           0       0.2          0.7        ;
+ 'Battery             ' 4                        5/12           0       0.2          0.7        ;
  'Radio               ' 0.0625                   5/12           0       0.2          0.43       ;
  'Autopilot           ' 0.52                     1              0       0.24         0.325      ;
  'Receiver            ' 0.07                     5/12           0       0.24         0.15       ;
@@ -410,6 +410,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
