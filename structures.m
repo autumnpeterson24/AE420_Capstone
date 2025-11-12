@@ -39,9 +39,9 @@ foam_den = 2 % lb/ft^3
 
 %% Calculation of Surface areas and lengths
 % Aerodynamic surfaces
-Wing_surf = WingSurf("NACA2412.dat", MAC, b);    % ft^2 per wing
-HStab_surf = WingSurf("NACA2412.dat", MACh, bh);     % ft^2
-VStab_surf = WingSurf("NACA2412.dat", MACv, bv);     % ft^2
+[Wing_surf, Wing_Vol] = WingSurf("NACA2412.dat", MAC, b);    % ft^2 per wing
+[HStab_surf, HStab_Vol] = WingSurf("NACA2412.dat", MACh, bh);     % ft^2
+[VStab_surf, VStab_Vol]= WingSurf("NACA2412.dat", MACv, bv);     % ft^2
 
 % Structural parts
 Fuselage_surf = cylinderSurfaceArea(rfuselage, Lfuselage);  % ft^2 per config
@@ -98,11 +98,11 @@ Cfig1 = {
 Cfig2 = {
     % structural
  'Fusel Skin          ' Fuselage+2               0.0            0       Lfuselage    rfuselage*2;
- 'Wing Skin           ' WingSkin+WingCore                  Lw             0       MAC          b          ;
+ 'Wing Skin           ' WingSkin+WingCore                 Lw             0       MAC          b          ;
  'Wing Spar           ' WingSpar                 Lw+MAC/3       0       0.1          b          ;
  'Empennage           ' Empenage                 Lw+MAC/3      -bh/2    Empenage_len 0.1        ;
  'Empennage           ' Empenage                 Lw+MAC/3       bh/2    Empenage_len 0.1        ;
- 'Horizontal Stab Skin' HStabSkin/cosd(50)*1.366 Lh             0       MACh         bh         ;
+ 'Horizontal Stab Skin' (HStabSkin+HStabCore)/cosd(50)*1.366 Lh             0       MACh         bh         ;
  'Horizontal Spar     ' HSpar/cosd(50)*1.366     Lh+MACh/3      0       0.1          bh         ;
     % propulsion
  'Motor               ' 2.83                     Lfuselage      0       0.25         0.3        ;
@@ -412,6 +412,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
