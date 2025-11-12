@@ -29,7 +29,7 @@ Lh = Lw + Lh;
 
 density = 0.025*12^3;         % Carbon Fiber lb/ft^3
 surf_den = density/(16*12);  % Carbon Fiber lb/ft^2
-lin_den = 0.2625;            % Carbon Fiber 1x1 inch 1/8 thickness lb/ft
+lin_den = 0.2125;            % Carbon Fiber 1x1 inch 1/8 thickness lb/ft
 foam_den = 2 % lb/ft^3
 
 %% Characterization
@@ -412,6 +412,7 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
 
 
 
