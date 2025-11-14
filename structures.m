@@ -13,13 +13,14 @@ function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, 
 % ConfigNum = type of configuration (1-4) based on the initial concepts)
 % PrintOutput = booleen 0 or 1 for if the code should output the plot and pie chard breakdown
 % lbs and ft are the base units out for W and CG. CG datum is from the nose
-
+ps = 0;
+pl = 0;
 %% Placeholder default values for Lh, Lv, Lw
 rfuselage = [10.74887755/2 9/2 25.26/2 10.08750493/2]/12;
 rfuselage = rfuselage(ConfigNum);
 Lfuselage = [98 54 86.01 48]/12;
 Lfuselage = Lfuselage(ConfigNum);
-Lw = [59.49 34.788 32.22 15.3]/12;
+Lw = [59.49 35.3040 32.22 15.3]/12;
 Lw = Lw(ConfigNum);
 
 %% calculation of secondary distances
@@ -30,7 +31,7 @@ Lh = Lw + Lh;
 density = 0.025*12^3;         % Carbon Fiber lb/ft^3
 surf_den = density/(16*12);  % Carbon Fiber lb/ft^2
 lin_den = 0.2125;            % Carbon Fiber 1x1 inch 1/8 thickness lb/ft
-foam_den = 2 % lb/ft^3
+foam_den = 2;
 
 %% Characterization
 [b, ~, ~, MAC] = characteristics(S, AR, t);        % ft
@@ -52,9 +53,11 @@ SparVStab_len = bh;                                         % ft
 
 %% Calculation of structural weights
 WingSkin = Wing_surf*surf_den;       % lb
-WingCore = Wing_Vol*foam_den;
+WingCore = Wing_Vol*foam_den;        % LB
 HStabSkin = HStab_surf*surf_den;     % lb
+HStabCore = HStab_Vol*foam_den;      % lb
 VStabSkin = VStab_surf*surf_den;     % lb
+VStabCore = VStab_Vol*foam_den;      % lb
 Fuselage = Fuselage_surf*surf_den;   % lb
 Empenage = Empenage_len*lin_den;     % lb
 WingSpar = SparWing_len*lin_den;     % lb
@@ -88,7 +91,7 @@ Cfig1 = {
  'Actuator'      0.15       Lh+(MACh/2) -0.5    0.2             0.2;
  'Payload'       3          0.5          0      1               0.7;
     % misc
- 'LandGear'      1.2        3            0      0.2             0.1;
+ 'LandGear'      1.2       3            0      0.2             0.1;
  'LandGear'      1.2        Lw+MAC/2     1.6    0.2             0.1;
  'LandGear'      1.2        Lw+MAC/2    -1.6    0.2             0.1;
  'CaptrMechn'    1.5        Lw-0.7       0.9    0.5             1;
@@ -102,18 +105,22 @@ Cfig2 = {
  'Wing Spar           ' WingSpar                 Lw+MAC/3       0       0.1          b          ;
  'Empennage           ' Empenage                 Lw+MAC/3      -bh/2    Empenage_len 0.1        ;
  'Empennage           ' Empenage                 Lw+MAC/3       bh/2    Empenage_len 0.1        ;
- 'Horizontal Stab Skin' (HStabSkin+HStabCore)/cosd(50)*1.366 Lh             0       MACh         bh         ;
+ 'Horizontal Stab Skin' HStabSkin+HStabCore      Lh             0       MACh         bh         ;
  'Horizontal Spar     ' HSpar/cosd(50)*1.366     Lh+MACh/3      0       0.1          bh         ;
+ 'Verical Stab Skin'  VStabCore+VStabSkin        Lv             bh/2    MACh         0.1        ;
+ 'Vertical Spar     ' VSpar                      Lv+MACv        bh/2    0.1          0.1        ;
+ 'Verical Stab Skin'  VStabCore+VStabSkin        Lv             -bh/2   MACh         0.1        ;
+ 'Vertical Spar     ' VSpar                      Lv+MACv        -bh/2   0.1          0.1        ;
     % propulsion
  'Motor               ' 2.83                     Lfuselage      0       0.25         0.3        ;
  'Prop                ' 0.125                    Lfuselage+0.25 0       0.08         2.1        ;
     % electrical
- 'Battery             ' 4                        5/12           0       0.2          0.7        ;
- 'Radio               ' 0.0625                   5/12           0       0.2          0.43       ;
- 'Autopilot           ' 0.52                     1              0       0.24         0.325      ;
- 'Receiver            ' 0.07                     5/12           0       0.24         0.15       ;
- 'BEC                 ' 0.3                      1              0       0.1          0.17       ;
- 'Payload             ' 3                        1              0       0.7          0.5        ;
+ 'Battery             ' 4                        5/12+ps           0       0.2          0.7        ;
+ 'Radio               ' 0.0625                   5/12+ps           0       0.2          0.43       ;
+ 'Autopilot           ' 0.52                     1+ps              0       0.24         0.325      ;
+ 'Receiver            ' 0.07                     5/12+ps           0       0.24         0.15       ;
+ 'BEC                 ' 0.3                      1+ps              0       0.1          0.17       ;
+ 'Payload             ' 3                        1+pl              0       0.7          0.5        ;
 
  'Actuator            ' 0.25                     Lw+MAC/2       b/4     0.2          0.2        ;
  'Actuator            ' 0.25                     Lw+MAC/2      -b/4     0.2          0.2        ;
@@ -121,10 +128,10 @@ Cfig2 = {
  'Actuator            ' 0.25                     Lh+(MACh/2)   -0.5     0.2          0.2        ;
 
     % misc
- 'Landing Gear        ' 1.5                      1              0       0.5          0.1        ;
+ 'Landing Gear        ' 1.5                      1.5              0       0.5          0.1        ;
  'Landing Gear        ' 1.5                      Lw+MAC/2       1.6     0.5          0.1        ;
  'Landing Gear        ' 1.5                      Lw+MAC/2      -1.6     0.5          0.1        ;
- 'Capture Mechanism   ' 2.0                      Lw-0.7         0.9     0.5          1.2        ;
+ 'Capture Mechanism   ' 2.0                      Lw-0.3         0.9     0.5          1.2        ;
  };
 
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
@@ -221,7 +228,7 @@ cgY    = sum(W .* Yc) / totalW;
 %% plotting
 if PrintOutput == 1
 % setup plot the view with no distortion
-figure; hold on; axis equal;
+figure(1); hold on; axis equal;
 xlabel('X (ft)'); ylabel('Y (ft)');
 % title('Configuration 1: Twin Boom CG');
 
@@ -239,19 +246,21 @@ end
 
 plot(cgX, cgY, 'kx', 'MarkerSize',8, 'LineWidth',2);
 text(cgX, cgY, '  CG','Color','k','FontWeight','bold');
+set(gca, "FontSize", 20)
 grid on;
 hold off
 
 %% Bill of Materials
 % converts the data of the chosen configuration to a bill of materials in the form of a dictionary
 % part data can be used for tradeoff analysis and have the same name as the config part definitions
-    d = dictionary(names, 0); 
-    for ii = 1:numel(names)
-        d(names(ii)) = d(names(ii))+W(ii);
-    end
-    disp(d)
-    E = entries(d);
-    piechart(E.Value, E.Key)
+    % d = dictionary(names, 0); 
+    % for ii = 1:numel(names)
+    %     d(names(ii)) = d(names(ii))+W(ii);
+    % end
+    % disp(d)
+    % E = entries(d);
+    % figure(2)
+    % piechart(E.Value, E.Key)
 end
 end
 
