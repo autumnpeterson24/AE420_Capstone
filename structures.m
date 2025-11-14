@@ -102,15 +102,15 @@ Cfig2 = {
     % structural
  'Fusel Skin          ' Fuselage+2               0.0            0       Lfuselage    rfuselage*2;
  'Wing Skin           ' WingSkin+WingCore                 Lw             0       MAC          b          ;
- 'Wing Spar           ' WingSpar                 Lw+MAC/3       0       0.1          b          ;
- 'Empennage           ' Empenage                 Lw+MAC/3      -bh/2    Empenage_len 0.1        ;
- 'Empennage           ' Empenage                 Lw+MAC/3       bh/2    Empenage_len 0.1        ;
+ 'Wing Spar           ' WingSpar                 Lw+MAC/2       0       0.1          b          ;
+ 'Empennage           ' Empenage                 Lw+MAC/2      -bh/2    Empenage_len 0.1        ;
+ 'Empennage           ' Empenage                 Lw+MAC/2       bh/2    Empenage_len 0.1        ;
  'Horizontal Stab Skin' HStabSkin+HStabCore      Lh             0       MACh         bh         ;
- 'Horizontal Spar     ' HSpar/cosd(50)*1.366     Lh+MACh/3      0       0.1          bh         ;
+ 'Horizontal Spar     ' HSpar/cosd(50)*1.366     Lh+MACh/2      0       0.1          bh         ;
  'Verical Stab Skin'  VStabCore+VStabSkin        Lv             bh/2    MACh         0.1        ;
- 'Vertical Spar     ' VSpar                      Lv+MACv        bh/2    0.1          0.1        ;
- 'Verical Stab Skin'  VStabCore+VStabSkin        Lv             -bh/2   MACh         0.1        ;
- 'Vertical Spar     ' VSpar                      Lv+MACv        -bh/2   0.1          0.1        ;
+ 'Vertical Spar     ' VSpar                      Lv+MACv/2      bh/2    0.1          0.1        ;
+ 'Verical Stab Skin'  VStabCore+VStabSkin        Lv            -bh/2   MACh         0.1        ;
+ 'Vertical Spar     ' VSpar                      Lv+MACv/2     -bh/2   0.1          0.1        ;
     % propulsion
  'Motor               ' 2.83                     Lfuselage      0       0.25         0.3        ;
  'Prop                ' 0.125                    Lfuselage+0.25 0       0.08         2.1        ;
@@ -421,3 +421,6 @@ AirfoilArea = -trap(NACA2412_Coord(:, 1), NACA2412_Coord(:, 2));
 WingSurfArea = (ArcLength*b+2*AirfoilArea); % in^2
 WingVolume = AirfoilArea*b;                 % in^3
 end
+
+
+
