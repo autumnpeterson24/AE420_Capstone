@@ -13,8 +13,8 @@ function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, 
 % ConfigNum = type of configuration (1-4) based on the initial concepts)
 % PrintOutput = booleen 0 or 1 for if the code should output the plot and pie chard breakdown
 % lbs and ft are the base units out for W and CG. CG datum is from the nose
-ps = 3;
-pl = 2;
+ps = 3.3;
+pl = 1.5;
 %% Placeholder default values for Lh, Lv, Lw
 rfuselage = [10.74887755/2 9/2 9/2 10.08750493/2]/12;
 rfuselage = rfuselage(ConfigNum);
@@ -45,7 +45,7 @@ foam_den = 2;
 [VStab_surf, VStab_Vol]= WingSurf("NACA2412.dat", MACv, bv);     % ft^2
 
 % Structural parts
-Fuselage_surf = cylinderSurfaceArea(rfuselage, Lfuselage)  % ft^2 per config
+Fuselage_surf = cylinderSurfaceArea(rfuselage, Lfuselage);  % ft^2 per config
 Empenage_len = max([Lh, Lv])-Lw;                                % ft
 SparWing_len = b;                                           % ft
 SparHStab_len = bh;                                         % ft
@@ -58,7 +58,7 @@ HStabSkin = HStab_surf*surf_den;     % lb
 HStabCore = HStab_Vol*foam_den;      % lb
 VStabSkin = VStab_surf*surf_den;     % lb
 VStabCore = VStab_Vol*foam_den;      % lb
-Fuselage = Fuselage_surf*surf_den   % lb
+Fuselage = Fuselage_surf*surf_den;   % lb
 Empenage = Empenage_len*lin_den;     % lb
 WingSpar = SparWing_len*lin_den;     % lb
 HSpar = SparHStab_len*lin_den;       % lb
@@ -136,7 +136,7 @@ Cfig2 = {
  'Landing Gear        ' 1.5                      Lw+MAC/2       1.6     0.5          0.1        ;
  'Landing Gear        ' 1.5                      Lw+MAC/2      -1.6     0.5          0.1        ;
  'Capture Mechanism   ' 3.0                      Lw-0.3         0.9     0.5          1.2        ;
- };
+ }
 
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
 Cfig3 = {
@@ -259,6 +259,8 @@ end
 
 plot(cgX, cgY, 'kx', 'MarkerSize',8, 'LineWidth',2);
 text(cgX, cgY, '  CG','Color','k','FontWeight','bold');
+plot(4.01, 0, 'rx', 'MarkerSize',8, 'LineWidth',2);
+text(4.01, 0, '  NP','Color','r','FontWeight','bold');
 set(gca, "FontSize", 20)
 grid on;
 hold off
