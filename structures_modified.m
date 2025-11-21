@@ -1,4 +1,4 @@
-function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, ConfigNum, PrintOutput)
+function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, ConfigNum, PrintOutput, CoreBool)
 % calculates the total weight and the Cg location in the X and Y in
 % reference to the datum of the nose in ft
 % Inputs include:
@@ -31,8 +31,12 @@ Lh = Lw + Lh;
 density = 0.38/3;         % Carbon Fiber lb/ft^3
 surf_den = density;  % Carbon Fiber lb/ft^2
 lin_den = 0.2125;            % Carbon Fiber 1x1 inch 1/8 thickness lb/ft
-foam_den = 2;
 
+if CoreBool == 1
+    foam_den = 2;
+else
+    foam_den = 0;
+end
 %% Characterization
 [b, ~, ~, MAC] = characteristics(S, AR, t);        % ft
 [bh, ~, ~, MACh] = characteristics(Sh, ARh, th); % ft
