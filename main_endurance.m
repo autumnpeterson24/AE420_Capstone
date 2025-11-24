@@ -63,21 +63,21 @@
 %
 % Modified to keep S constant and vary AR
 
-close all
+% close all
 clear variables
 clc
 
 % Design variable choices
 Alt = 5000; % flight altitude (ft)
-S = 10;      % wing area (ft^2) - CONSTANT
-t = 0.7;     % wing taper ratio
+S = 11;      % wing area (ft^2) - CONSTANT
+t = 0.67;     % wing taper ratio
 Cfig = 2;    % Config Selection
 
 % Loop setup
 tic
-T = 8.75; % Thrust (lbf) variable
-AR_values = [5, 8, 10, 12, 20]; % Different aspect ratios to test
-colors = ['y','b', 'g', 'r', 'k']; % Colors for different AR curves
+T = .3*30; % Thrust (lbf) variable
+AR_values = [4, 6, 8, 10, 12]; % Different aspect ratios to test
+colors = ['m','b', 'g', 'r', 'k']; % Colors for different AR curves
 
 figure;
 hold on;
@@ -103,22 +103,17 @@ for ar_idx = 1:length(AR_values)
         
 
             % Call Controls function
-            [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S, cmac, t, Cfig);
-            
+            [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S , cmac , t, Cfig);
             % Call Structures function
-            [W, CG] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, Cfig);
-            
+            [W, CG] = structures(S , AR , t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, Cfig,0);
             % Call Aerodynamics function
-            [D, CDp, CDi, alpha] = aerodynamics(W, S, AR, t, Sh, ARh, th, Sv, ARv, tv, V, Alt, Cfig);
-            
+            [D, CDp, CDi, alpha] = aerodynamics(W, S , AR , t, Sh, ARh, th, Sv, ARv, tv, V, Alt, Cfig);
             % Call Stability function
-            [SM, I] = stability(CG, AR, t, Vh, ARh, alpha, cmac, Cfig);
-            
+            [SM, I] = stability(CG, AR , t, Vh, ARh, alpha, cmac , hn, Cfig);
             % Call Propulsion function
-            [P] = propulsion(V, D, Alt);
-
+            %[P] = propulsion(V, D, Alt);
             % Call Performance function
-            [TOFL, Climb, MaxAlt, Time] = performance(W, S, T, V, Alt, AR);
+            [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D);
            
         
            % T_end = T(jj);
@@ -138,10 +133,17 @@ for ar_idx = 1:length(AR_values)
 end
 
 % Finalize plot
-xlabel('V (ft/s)', 'FontSize', 12);
-ylabel('E (hours)', 'FontSize', 12);
-title('Endurance vs  Velocity ', 'FontSize', 14);
-legend('show', 'Location', 'best');
+%xlabel('V (ft/s)', 'FontSize', 12);
+%ylabel('E (hours)', 'FontSize', 12);
+ylim([0,1])
+yline(.5,'DisplayName','Minimum Endurance')
+xline(101,'--r','DisplayName','Cruise Velocity')
+hPoint = plot(101, 0.5, 'ko', 'MarkerFaceColor', 'k');
+set(get(get(hPoint,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+%title('Endurance vs  Velocity ', 'FontSize', 14);
+legend('Location', 'southwest','NumColumns', 2);
+xlabel('Velocity (ft/s)'); ylabel('Endurance (hr)');
+set(findall(gcf,'-property','FontSize'),'FontSize',18)
 hold off;
 
 toc
