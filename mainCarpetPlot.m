@@ -54,7 +54,7 @@ for S = start_s_limit:s_increment:end_s_limit
     end
     while TOFL<350
         % Call Performance function
-        [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D);
+        [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D,CDp);
 
         T = T - .1;
     end
@@ -64,7 +64,7 @@ for S = start_s_limit:s_increment:end_s_limit
 
     while Climb>500
         % Call Performance function
-        [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D);
+        [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D,CDp);
 
         T = T - .1;
     end

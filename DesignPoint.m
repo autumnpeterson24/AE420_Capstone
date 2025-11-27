@@ -64,4 +64,4 @@ t = TaperRatio;
 %[P] = propulsion(V, D, Alt);
 % Call Performance function
 T = .3*W;
-[TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D);
+[TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D,CDp);

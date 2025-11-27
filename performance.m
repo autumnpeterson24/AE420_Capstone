@@ -1,4 +1,4 @@
-function [TOFL, Climb, MaxAlt, Time2] = performance(W, S, P,V, h,AR,Drag);
+function [TOFL, Climb, MaxAlt, Time2] = performance(W, S, P,V, h,AR,Drag,CDo);
 % Input variables:
 %		W		        Weight of aircraft (lb)
 %		S		        Wing area (ft^2)
@@ -17,9 +17,9 @@ g = 32.174;	 % acceleration due to gravity (ft/s^2)
 AR = AR;
 %Baseline Constants
 Cl_max = 1.4;
-Cdo = [0.0313 0.0322 0.0321]; % TO 5200 6000 ft
-n_total = .61; %Estimate
-k_maxAlt = 3*Cdo(3)/(Cl_max^2);
+%Cdo = [0.0313 0.0322 0.0321]; % TO 5200 6000 ft
+n_total = .65; %Estimate
+k_maxAlt = 3*CDo/(Cl_max^2);
 %atmosphere calc
 T = 518.69 - (0.00356 * h);
 Pres = 2116 .* (T./ 518.6).^5.256;    % NASA
@@ -29,7 +29,7 @@ rho = Pres ./ (R.*T);
 %V = V*1.68781; %ft/s
 T_W = .3;
 % P = [T_W*W .86*T_W*W .84*T_W*W]; %lbf Roths T/W estimate
-D = (1/2).*rho.*V^2*S.*Cdo; %lbf
+D = (1/2).*rho.*V^2*S.*CDo; %lbf
 Vavg = 0.7.*1.2.*sqrt(2.*W./(rho(1).*S.*Cl_max)); % average velocity
 Lavg=1.*0.5.*rho(1).*Vavg.^2.*S; % average lift
 
@@ -49,47 +49,47 @@ Climb = Climb_Cruise*60;
 % max altitude (ft) Needs to find altitude where 100ft/min climb is acheived (Bennett)
 %MaxAlt = 15000;
 % P_MaxAlt = 100*W/V/60 + D(3);
-P_MaxAlt = 100*W/V/60 + D(3);
-
-alts = linspace(0,40000,80);
-prop_D_ft     = 22/12;
-CT_fun_raw = @(J) (0.12 - 0.08.*J); 
-CT_fun     = @(J) max(0.02, CT_fun_raw(J) * 1);
-rho0 = 0.002377; T0 = 518.67; L = 0.00356; g = 32.174; Rgas = 1716.59; % imperial
-atmo = @(hft) deal( max(T0 - L.*hft, 200), rho0 .* (max(T0 - L.*hft,200)./T0).^(g./(L.*Rgas)-1) );
-[maxT_alt, rho_alt] = deal(zeros(size(alts)));
-% 1) Max static thrust vs altitude (J≈0, rpm capped by hardware)
-for i = 1:numel(alts)
-    [~, rho]   = atmo(alts(i));
-    rho_alt(i) = rho;
-    rpm        = 4218;         % conservative back-EMF cap
-    n          = rpm/60;             % rev/s
-    J          = 0;                  % static
-    CT         = CT_fun(J);
-    % Dimensional consistency in imperial prop theory:
-    maxT_alt(i) = CT * rho * (n^2) * (prop_D_ft^4);   % lbf
-    if maxT_alt >= P_MaxAlt
-        MaxAlt = alts(i);
-        break;
-    end
-end
+% %P_MaxAlt = 100*W/V/60 + D(3);
+% 
+% alts = linspace(0,40000,80);
+% prop_D_ft     = 22/12;
+% CT_fun_raw = @(J) (0.12 - 0.08.*J); 
+% CT_fun     = @(J) max(0.02, CT_fun_raw(J) * 1);
+% rho0 = 0.002377; T0 = 518.67; L = 0.00356; g = 32.174; Rgas = 1716.59; % imperial
+% atmo = @(hft) deal( max(T0 - L.*hft, 200), rho0 .* (max(T0 - L.*hft,200)./T0).^(g./(L.*Rgas)-1) );
+% [maxT_alt, rho_alt] = deal(zeros(size(alts)));
+% % 1) Max static thrust vs altitude (J≈0, rpm capped by hardware)
+% for i = 1:numel(alts)
+%     [~, rho]   = atmo(alts(i));
+%     rho_alt(i) = rho;
+%     rpm        = 4218;         % conservative back-EMF cap
+%     n          = rpm/60;             % rev/s
+%     J          = 0;                  % static
+%     CT         = CT_fun(J);
+%     % Dimensional consistency in imperial prop theory:
+%     maxT_alt(i) = CT * rho * (n^2) * (prop_D_ft^4);   % lbf
+%     if maxT_alt >= P_MaxAlt
+%         MaxAlt = alts(i);
+%         break;
+%     end
+% end
 MaxAlt = 15000;
 
 %needs work with prop team to find the altitude
 
 % flight time (hours) https://www.researchgate.net/publication/269567470_Range_and_Endurance_Estimates_for_Battery-Powered_Aircraft
 Rt = 1; %Battery hour rating (typically 1 according to Traub for small rechargable battery packs)
-n = 1.3; %Battery discharge parameter (taken from Traub's paper saying 1.3 is common for lithium polymer batteries, li ion is closer to 1.05 for reference according to AI)
-Vt = 11.11; %Battery Voltage (Payloads team's value)
-C = 56; %Battery capacity in amp hours (Guess based off of similar applications and prop teams estimate of 5000mAh)
+n = 1.05; %Battery discharge parameter (taken from Traub's paper saying 1.3 is common for lithium polymer batteries, li ion is closer to 1.05 for reference according to AI)
+Vt = 44.4; %Battery Voltage (Payloads team's value)
+C = 10; %Battery capacity in amp hours (Guess based off of similar applications and prop teams estimate of 5000mAh)
 %k = 3*Cdo(2)/(Cl_max^2); % Sovled from Cdo = (1/3)k*CL^2 
 
 e0= 4.6 *(1-0.033 *AR^(0.53))*(1^(0.1))-3.3;
 
 k=1/(pi*e0*AR);
 
-Time = (Rt^(1-n)) * ((n_total*Vt*C)/((2/sqrt(rho*S))*(Cdo(2)^.25)*(2*W*sqrt(k/3))^1.5))^n; %hours max time 
-Time2 = (Rt^(1-n)) * ((n_total*Vt*C)/(.5*rho*V^3*S*Cdo(2) + 2*W^2*k/(rho*V*S)))^n; %hours cruise time
+%Time = (Rt^(1-n)) * ((n_total*Vt*C)/((2/sqrt(rho*S))*(Cdo(2)^.25)*(2*W*sqrt(k/3))^1.5))^n; %hours max time 
+Time2 = (Rt^(1-n)) * ((n_total*Vt*C)/(.5*rho*V^3*S*CDo + (2*W^2*k)/(rho*V*S)))^n; %hours cruise time
 
 %Code Outputs
 % fprintf("Takeoff field length              = %4.2f (ft)\n",TOFL);

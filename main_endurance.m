@@ -87,7 +87,7 @@ for ar_idx = 1:length(AR_values)
     AR = AR_values(ar_idx);
     
     % Vary velocity
-    V_sweep = linspace(50.6, 118.1, 100); % Sweep velocity from 50.6 to 118.1 ft/s
+    V_sweep = linspace(46, 118.1, 100); % Sweep velocity from 50.6 to 118.1 ft/s
     
    
     E_array = zeros(1, 100);
@@ -104,6 +104,17 @@ for ar_idx = 1:length(AR_values)
 
             % Call Controls function
             [Sh, ARh, th, Lh, Vh, Sv, ARv, tv, Lv, hn] = controls(b, S , cmac , t, Cfig);
+            S = 11;
+            b = sqrt(AR*S);
+            t= .67;
+            Sh = 2.5;
+            ARh = 2.589;
+            th=1;
+            Sv = 1;
+            ARv = 1.170;
+            tv=1;
+            Alt = 5000;
+            Cfig = 2;
             % Call Structures function
             [W, CG] = structures(S , AR , t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, Cfig,0);
             % Call Aerodynamics function
@@ -113,7 +124,7 @@ for ar_idx = 1:length(AR_values)
             % Call Propulsion function
             %[P] = propulsion(V, D, Alt);
             % Call Performance function
-            [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D);
+            [TOFL, Climb, MaxAlt, Time] = performance(W, S , T ,V, Alt,AR, D, CDp);
            
         
            % T_end = T(jj);
@@ -135,7 +146,7 @@ end
 % Finalize plot
 %xlabel('V (ft/s)', 'FontSize', 12);
 %ylabel('E (hours)', 'FontSize', 12);
-ylim([0,1])
+ylim([0,2.5])
 yline(.5,'DisplayName','Minimum Endurance')
 xline(101,'--r','DisplayName','Cruise Velocity')
 hPoint = plot(101, 0.5, 'ko', 'MarkerFaceColor', 'k');
