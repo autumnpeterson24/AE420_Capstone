@@ -13,14 +13,14 @@ function [totalW, cgX] = structures(S, AR, t, Sh, ARh, th, Lh, Sv, ARv, tv, Lv, 
 % ConfigNum = type of configuration (1-4) based on the initial concepts)
 % PrintOutput = booleen 0 or 1 for if the code should output the plot and pie chard breakdown
 % lbs and ft are the base units out for W and CG. CG datum is from the nose
-ps = 0;
-pl = 0;
+ps = 3;
+pl = 2;
 %% Placeholder default values for Lh, Lv, Lw
-rfuselage = [10.74887755/2 9/2 25.26/2 10.08750493/2]/12;
+rfuselage = [10.74887755/2 9/2 9/2 10.08750493/2]/12;
 rfuselage = rfuselage(ConfigNum);
-Lfuselage = [98 54 86.01 48]/12;
+Lfuselage = [98 54 54 48]/12;
 Lfuselage = Lfuselage(ConfigNum);
-Lw = [59.49 35.3040 32.22 15.3]/12;
+Lw = [59.49 35.3040 35.3040 15.3]/12;
 Lw = Lw(ConfigNum);
 
 %% calculation of secondary distances
@@ -28,8 +28,8 @@ Lw = Lw(ConfigNum);
 Lv = Lw + Lv;
 Lh = Lw + Lh;
 
-density = 0.025*12^3;         % Carbon Fiber lb/ft^3
-surf_den = density/(16*12);  % Carbon Fiber lb/ft^2
+density = 0.38/3;         % Carbon Fiber lb/ft^3
+surf_den = density;  % Carbon Fiber lb/ft^2
 lin_den = 0.2125;            % Carbon Fiber 1x1 inch 1/8 thickness lb/ft
 foam_den = 2;
 
@@ -45,20 +45,20 @@ foam_den = 2;
 [VStab_surf, VStab_Vol]= WingSurf("NACA2412.dat", MACv, bv);     % ft^2
 
 % Structural parts
-Fuselage_surf = cylinderSurfaceArea(rfuselage, Lfuselage);  % ft^2 per config
+Fuselage_surf = cylinderSurfaceArea(rfuselage, Lfuselage)  % ft^2 per config
 Empenage_len = max([Lh, Lv])-Lw;                                % ft
 SparWing_len = b;                                           % ft
 SparHStab_len = bh;                                         % ft
 SparVStab_len = bh;                                         % ft
 
 %% Calculation of structural weights
-WingSkin = Wing_surf*surf_den;       % lb
+WingSkin = Wing_surf*surf_den*2;       % lb
 WingCore = Wing_Vol*foam_den;        % LB
 HStabSkin = HStab_surf*surf_den;     % lb
 HStabCore = HStab_Vol*foam_den;      % lb
 VStabSkin = VStab_surf*surf_den;     % lb
 VStabCore = VStab_Vol*foam_den;      % lb
-Fuselage = Fuselage_surf*surf_den;   % lb
+Fuselage = Fuselage_surf*surf_den   % lb
 Empenage = Empenage_len*lin_den;     % lb
 WingSpar = SparWing_len*lin_den;     % lb
 HSpar = SparHStab_len*lin_den;       % lb
@@ -85,10 +85,10 @@ Cfig1 = {
     % electrical
  'Battery'       3.4        2            0      0.8             0.6;
  'Electronics'   0.4        3.5          0      0.5             0.5;
- 'Actuator'      0.15       Lw+MAC/2     b/4    0.2             0.2;
- 'Actuator'      0.15       Lw+MAC/2    -b/4    0.2             0.2;
- 'Actuator'      0.15       Lh+(MACh/2)  0.5    0.2             0.2;
- 'Actuator'      0.15       Lh+(MACh/2) -0.5    0.2             0.2;
+ 'Actuator'      0.12       Lw+MAC/2     b/4    0.2             0.2;
+ 'Actuator'      0.12       Lw+MAC/2    -b/4    0.2             0.2;
+ 'Actuator'      0.12       Lh+(MACh/2)  0.5    0.2             0.2;
+ 'Actuator'      0.12       Lh+(MACh/2) -0.5    0.2             0.2;
  'Payload'       3          0.5          0      1               0.7;
     % misc
  'LandGear'      1.2       3            0      0.2             0.1;
@@ -101,15 +101,56 @@ Cfig1 = {
 Cfig2 = {
     % structural
  'Fusel Skin          ' Fuselage+2               0.0            0       Lfuselage    rfuselage*2;
- 'Wing Skin           ' WingSkin+WingCore                 Lw             0       MAC          b          ;
+ 'Wing           ' WingSkin+WingCore                 Lw             0       MAC          b          ;
  'Wing Spar           ' WingSpar                 Lw+MAC/2       0       0.1          b          ;
  'Empennage           ' Empenage                 Lw+MAC/2      -bh/2    Empenage_len 0.1        ;
  'Empennage           ' Empenage                 Lw+MAC/2       bh/2    Empenage_len 0.1        ;
- 'Horizontal Stab Skin' HStabSkin+HStabCore      Lh             0       MACh         bh         ;
- 'Horizontal Spar     ' HSpar/cosd(50)*1.366     Lh+MACh/2      0       0.1          bh         ;
- 'Verical Stab Skin'  VStabCore+VStabSkin        Lv             bh/2    MACh         0.1        ;
+ 'Horizontal Stab' HStabSkin+HStabCore      Lh             0       MACh         bh         ;
+ 'Horizontal Spar     ' HSpar     Lh+MACh/2      0       0.1          bh         ;
+ 'Verical Stab'  VStabCore+VStabSkin        Lv             bh/2    MACh         0.1        ;
  'Vertical Spar     ' VSpar                      Lv+MACv/2      bh/2    0.1          0.1        ;
- 'Verical Stab Skin'  VStabCore+VStabSkin        Lv            -bh/2   MACh         0.1        ;
+ 'Verical Stab'  VStabCore+VStabSkin        Lv            -bh/2   MACh         0.1        ;
+ 'Vertical Spar     ' VSpar                      Lv+MACv/2     -bh/2   0.1          0.1        ;
+    % propulsion
+ 'Motor               ' 2.83                     Lfuselage      0       0.25         0.3        ;
+ 'Prop                ' 0.125                    Lfuselage+0.25 0       0.08         2.1        ;
+    % electrical
+ 'Battery             ' 4                        5/12+ps           0       0.2          0.7        ;
+ 'Receiver            ' 0.0625                   5/12+ps           0       0.2          0.43       ;
+ 'Autopilot           ' 0.13                     1+ps              0       0.24         0.325      ;
+ 'Radio               ' 1.81                     5/12+ps           0       0.24         0.15       ;
+ 'Payload             ' 3                        1+pl              0       0.7          0.5        ;
+ 'Camera              ' 1.5                      Lh+MACh/2                0       0.1          0.1      ;
+
+ 'Actuator            ' 0.12                     Lw+MAC/2       b/3     0.2          0.2        ;
+ 'Actuator            ' 0.12                     Lw+MAC/2      -b/3     0.2          0.2        ;
+ 'Actuator            ' 0.12                     Lw+MAC/2       b/8     0.2          0.2        ;
+ 'Actuator            ' 0.12                     Lw+MAC/2      -b/8     0.2          0.2        ;
+ 'Actuator            ' 0.12                     Lh+(MACh/2)    0.5     0.2          0.2        ;
+ 'Actuator            ' 0.12                     Lh+(MACh/2)   -0.5     0.2          0.2        ;
+ 'Actuator            ' 0.12                     Lv+(MACv/2)    bh/2     0.1          0.1        ;
+ 'Actuator            ' 0.12                     Lv+(MACv/2)   -bh/2     0.1          0.1        ;
+
+    % misc
+ 'Landing Gear        ' 1.5                      1.5              0       0.5          0.1        ;
+ 'Landing Gear        ' 1.5                      Lw+MAC/2       1.6     0.5          0.1        ;
+ 'Landing Gear        ' 1.5                      Lw+MAC/2      -1.6     0.5          0.1        ;
+ 'Capture Mechanism   ' 3.0                      Lw-0.3         0.9     0.5          1.2        ;
+ }
+
+%     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
+Cfig3 = {
+   % structural
+ 'Fusel Skin          ' Fuselage+2               0.0            0       Lfuselage    rfuselage*2;
+ 'Wing           ' WingSkin+WingCore                 Lw             0       MAC          b          ;
+ 'Wing Spar           ' WingSpar                 Lw+MAC/2       0       0.1          b          ;
+ 'Empennage           ' Empenage                 Lw+MAC/2      -bh/2    Empenage_len 0.1        ;
+ 'Empennage           ' Empenage                 Lw+MAC/2       bh/2    Empenage_len 0.1        ;
+ 'Horizontal Stab' HStabSkin+HStabCore      Lh             0       MACh         bh         ;
+ 'Horizontal Spar     ' HSpar     Lh+MACh/2      0       0.1          bh         ;
+ 'Verical Stab'  VStabCore+VStabSkin        Lv             bh/2    MACh         0.1        ;
+ 'Vertical Spar     ' VSpar                      Lv+MACv/2      bh/2    0.1          0.1        ;
+ 'Verical Stab'  VStabCore+VStabSkin        Lv            -bh/2   MACh         0.1        ;
  'Vertical Spar     ' VSpar                      Lv+MACv/2     -bh/2   0.1          0.1        ;
     % propulsion
  'Motor               ' 2.83                     Lfuselage      0       0.25         0.3        ;
@@ -121,6 +162,8 @@ Cfig2 = {
  'Receiver            ' 0.07                     5/12+ps           0       0.24         0.15       ;
  'BEC                 ' 0.3                      1+ps              0       0.1          0.17       ;
  'Payload             ' 3                        1+pl              0       0.7          0.5        ;
+ 'Camera              ' 1.5                     Lh+MACh/2                0       0.1          0.1      ;
+
 
  'Actuator            ' 0.25                     Lw+MAC/2       b/4     0.2          0.2        ;
  'Actuator            ' 0.25                     Lw+MAC/2      -b/4     0.2          0.2        ;
@@ -131,37 +174,7 @@ Cfig2 = {
  'Landing Gear        ' 1.5                      1.5              0       0.5          0.1        ;
  'Landing Gear        ' 1.5                      Lw+MAC/2       1.6     0.5          0.1        ;
  'Landing Gear        ' 1.5                      Lw+MAC/2      -1.6     0.5          0.1        ;
- 'Capture Mechanism   ' 2.0                      Lw-0.3         0.9     0.5          1.2        ;
- };
-
-%     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
-Cfig3 = {
-    % structural
- 'FuselSkin'     Fuselage   0.0        0       Lfuselage        rfuselage*2;
- 'WingSkin'      WingSkin   Lw         0       MAC              b;
- 'WingSpar'      WingSpar   Lw+MAC/3   0       0.1              b;
- 'HStabSkin'     HStabSkin/2  Lh         rfuselage+bh/4       MACh             bh/2;
- 'HSpar'         HSpar/2      Lh+MACh/3  rfuselage+bh/4       0.1              bh/2;
- 'HStabSkin'     HStabSkin/2  Lh        -rfuselage-bh/4       MACh             bh/2;
- 'HSpar'         HSpar/2      Lh+MACh/3 -rfuselage-bh/4       0.1              bh/2;
- 'VStabSkin'     VStabSkin    Lv        0         MACv             0.1;
- 'VSpar'         VSpar        Lv+MACv/3  0   0.1              0.1; 
-    % propulsion
- 'Motor'         2          Lfuselage           0       0.25            0.5;
- 'Prop'          0.25       Lfuselage+0.25      0       0.08            1.6;
-    % electrical
- 'Battery'       3.4        2            0      0.8             0.6;
- 'Electronics'   0.4        3.5          0      0.5             0.5;
- 'Actuator'      0.15       Lw+MAC/2     b/4    0.2             0.2;
- 'Actuator'      0.15       Lw+MAC/2    -b/4    0.2             0.2;
- 'Actuator'      0.15       Lh+(MACh/2)  rfuselage+bh/8    0.2             0.2;
- 'Actuator'      0.15       Lh+(MACh/2) -rfuselage-bh/4    0.2             0.2;
- 'Payload'       3          0.5          0      1               0.7;
-    % misc
- 'LandGear'      1.2        3            0      0.2             0.1;
- 'LandGear'      1.2        Lw+MAC/2     1.6    0.2             0.1;
- 'LandGear'      1.2        Lw+MAC/2    -1.6    0.2             0.1;
- 'CaptrMechn'    1.5        Lw-0.7       0.9    0.5             1;
+ 'Capture Mechanism   ' 3.0                      Lw-0.3         0.9     0.5          1.2        ;
  };
 
 %     [Name,     Weight,    X_lead,    Y_lead, LengthX,         LengthY]
@@ -253,11 +266,11 @@ hold off
 %% Bill of Materials
 % converts the data of the chosen configuration to a bill of materials in the form of a dictionary
 % part data can be used for tradeoff analysis and have the same name as the config part definitions
-    % d = dictionary(names, 0); 
-    % for ii = 1:numel(names)
-    %     d(names(ii)) = d(names(ii))+W(ii);
-    % end
-    % disp(d)
+    d = dictionary(names, 0); 
+    for ii = 1:numel(names)
+        d(names(ii)) = d(names(ii))+W(ii);
+    end
+    disp(d)
     % E = entries(d);
     % figure(2)
     % piechart(E.Value, E.Key)
